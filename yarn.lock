@@ -1914,10 +1914,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:~4.8.1":
-  version: 4.8.3
-  resolution: "@openzeppelin/contracts@npm:4.8.3"
-  checksum: aea130d38d46840c5cbe3adbaa9a7ac645e4bd66ad3f3baf2fa78588c408d1a686170b3408c9e2e5e05530fba22ecdc00d7efb6b27852a8b29f91accbc0af255
+"@openzeppelin/contracts@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "@openzeppelin/contracts@npm:5.0.2"
+  checksum: 0cce6fc284bd1d89e2a447027832a62f1356b44ee31088899453e10349a63a62df2f07da63d76e4c41aad9c86b96b650b2b6fc85439ef276850dda1170a047fd
   languageName: node
   linkType: hard
 
@@ -2250,7 +2250,7 @@ __metadata:
     "@nomicfoundation/hardhat-ethers": ~3.0.5
     "@nomicfoundation/hardhat-network-helpers": ~1.0.6
     "@nomicfoundation/hardhat-verify": ~2.0.3
-    "@openzeppelin/contracts": ~4.8.1
+    "@openzeppelin/contracts": ^5.0.2
     "@typechain/ethers-v5": ~10.1.0
     "@typechain/ethers-v6": ~0.5.1
     "@typechain/hardhat": ~9.1.0
@@ -2260,6 +2260,8 @@ __metadata:
     "@types/qrcode": ~1
     "@typescript-eslint/eslint-plugin": ~6.7.3
     "@typescript-eslint/parser": ~6.7.3
+    "@uniswap/v2-core": ^1.0.1
+    "@uniswap/v2-periphery": ^1.1.0-beta.0
     chai: ~4.3.6
     dotenv: ~16.0.3
     envfile: ~6.18.0
@@ -3354,6 +3356,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@uniswap/lib@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@uniswap/lib@npm:1.1.1"
+  checksum: 2ec6689f606a0cf7dc7acd8b7471997638b2c89202c52743dcb4dfc0df182f6e058ec1a5e4d94a872c81bb85cbcde9e4a46b6de45eea0d34582627d97e743c7b
+  languageName: node
+  linkType: hard
+
 "@uniswap/sdk-core@npm:^3.0.0-alpha.3":
   version: 3.2.3
   resolution: "@uniswap/sdk-core@npm:3.2.3"
@@ -3379,6 +3388,30 @@ __metadata:
     tiny-invariant: ^1.1.0
     toformat: ^2.0.0
   checksum: 85c1ca851c94a6acdb822eb6bfda50e55701a1fb72b7928e6f7b0a6d6ced42cb987f392d3a4d4cc3453421fe52b850e5aaa896a42075d50786f28648399b977f
+  languageName: node
+  linkType: hard
+
+"@uniswap/v2-core@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@uniswap/v2-core@npm:1.0.0"
+  checksum: 41e42ad801dbc058ebf0ab38a8ce3195990e21eff4b2d49cd0a8c8fd25ac067feed55c379f2be22d915a7601d94966ae66127b748b2d3acde20eeb2351e51703
+  languageName: node
+  linkType: hard
+
+"@uniswap/v2-core@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@uniswap/v2-core@npm:1.0.1"
+  checksum: eaa118fe45eac2e80b7468547ce2cde12bd3c8157555d2e40e0462a788c9506c6295247b511382da85e44a89ad92aff7bb3433b23bfbd2eeea23942ecd46e979
+  languageName: node
+  linkType: hard
+
+"@uniswap/v2-periphery@npm:^1.1.0-beta.0":
+  version: 1.1.0-beta.0
+  resolution: "@uniswap/v2-periphery@npm:1.1.0-beta.0"
+  dependencies:
+    "@uniswap/lib": 1.1.1
+    "@uniswap/v2-core": 1.0.0
+  checksum: af13224c9f28f817be6e5794a7590b8433788e5387912343a8d61227a42b494b431fe6e549505e87d96a6896e96e289f80d92c68788eea4917596ec7fd94734e
   languageName: node
   linkType: hard
 
