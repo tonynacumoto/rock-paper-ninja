@@ -20,6 +20,18 @@ const Home: NextPage = () => {
           <div className="flex justify-center items-center space-x-2">
             <p className="my-2 font-medium">Connected Address:</p>
             <Address address={connectedAddress} />
+            <button
+              onClick={() => {
+                fetch("/api/huddle/create-room", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    wallet: connectedAddress,
+                  }),
+                });
+              }}
+            >
+              LobbyPage
+            </button>
           </div>
           <p className="text-center text-lg">
             Get started by editing{" "}
