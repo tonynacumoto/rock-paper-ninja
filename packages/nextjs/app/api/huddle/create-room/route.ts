@@ -17,5 +17,5 @@ export async function POST(request: Request) {
 
   const data = await response.json();
 
-  return NextResponse.json(data.roomId);
+  return NextResponse.json({ roomId: data.roomId });
 }
