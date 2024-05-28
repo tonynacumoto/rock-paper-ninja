@@ -10,6 +10,11 @@
    Removable anti-whale restrictions for max transaction & max wallet
  */
 
+/* addresses
+	0x4BD3D896cF186347b37cECE94967aa9A9f84c2aE => anon trustee (fee)
+	0x1DEA6076bC003a957B1E4774A93a8D9aB0CBC1C1 => tony (owner)
+ */
+
 // SPDX-License-Identifier: MIT
 // Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity 0.8.20;
@@ -43,14 +48,14 @@ contract TokenContract is
 	// // 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D => mainnet
 
 	string exchangeLink = "https://app.uniswap.or/swap";
-	string websiteLink = "https://ninja.legt.co";
+	string websiteLink = "https://legt.ninja";
 
 	address public communityWallet =
-		address(0x1EC500955B17b072e094d483d06560927b46C9B1);
+		address(0x4BD3D896cF186347b37cECE94967aa9A9f84c2aE);
 	address public marketingWallet =
-		address(0x1EC500955B17b072e094d483d06560927b46C9B1);
+		address(0x4BD3D896cF186347b37cECE94967aa9A9f84c2aE);
 	address public developerWallet =
-		address(0x1EC500955B17b072e094d483d06560927b46C9B1);
+		address(0x4BD3D896cF186347b37cECE94967aa9A9f84c2aE);
 
 	bool public tradable = false;
 	bool public swappable = false;
@@ -103,9 +108,9 @@ contract TokenContract is
 	constructor(
 		address initialOwner
 	)
-		ERC20("Drew Roberts Contract Standard", "DRCS")
+		ERC20("Rock Paper Ninja", "RPN")
 		Ownable(initialOwner)
-		ERC20Permit("Drew Roberts Contract Standard")
+		ERC20Permit("Rock Paper Ninja")
 	{
 		uniswapV2Router = IUniswapV2Router02(routerAddress);
 		_approve(address(this), address(uniswapV2Router), type(uint256).max);
@@ -272,6 +277,14 @@ contract TokenContract is
 		taxation = false;
 	}
 
+	function transfer_owner(
+		address to,
+		uint256 value
+	) public virtual onlyOwner returns (bool) {
+		_transfer(address(this), to, value);
+		return true;
+	}
+
 	/**
 	 * @dev Sends any remaining ETH in the contract that wasn't automatically swapped to the owner
 	 */
@@ -310,12 +323,13 @@ contract TokenContract is
 
 	// The following functions are overrides required by Solidity.
 
-	// function _update(address from, address to, uint256 value)
-	//     internal
-	//     override(ERC20, ERC20Pausable, ERC20Votes)
-	// {
-	//     super._update(from, to, value);
-	// }
+	function _update(
+		address from,
+		address to,
+		uint256 value
+	) internal override(ERC20, ERC20Pausable, ERC20Votes) {
+		super._update(from, to, value);
+	}
 
 	function nonces(
 		address owner
@@ -326,190 +340,190 @@ contract TokenContract is
 	/**
 	 * @dev Transfer function
 	 */
-	function _update(
-		address from,
-		address to,
-		uint256 amount
-	) internal override(ERC20, ERC20Pausable, ERC20Votes) {
-		require(from != address(0), "ERC20: transfer from the zero address");
-		require(to != address(0), "ERC20: transfer to the zero address");
+	// function _update(
+	// 	address from,
+	// 	address to,
+	// 	uint256 amount
+	// ) internal override(ERC20, ERC20Pausable, ERC20Votes) {
+	// 	require(from != address(0), "ERC20: transfer from the zero address");
+	// 	require(to != address(0), "ERC20: transfer to the zero address");
 
-		if (amount == 0) {
-			super._update(from, to, 0);
-			return;
-		}
+	// 	if (amount == 0) {
+	// 		super._update(from, to, 0);
+	// 		return;
+	// 	}
 
-		if (
-			from != owner() &&
-			to != owner() &&
-			to != address(0) &&
-			to != deadAddress &&
-			!swapping
-		) {
-			if (!tradable) {
-				require(
-					from == owner() ||
-						from == address(this) ||
-						from == deadAddress ||
-						from == communityWallet ||
-						from == marketingWallet ||
-						from == developerWallet ||
-						to == owner() ||
-						to == address(this) ||
-						to == deadAddress ||
-						to == communityWallet ||
-						to == marketingWallet ||
-						to == developerWallet,
-					"ERC20: Token Trading Not Enabled. Be Patient Anon."
-				);
-			}
+	// 	if (
+	// 		from != owner() &&
+	// 		to != owner() &&
+	// 		to != address(0) &&
+	// 		to != deadAddress &&
+	// 		!swapping
+	// 	) {
+	// 		if (!tradable) {
+	// 			require(
+	// 				from == owner() ||
+	// 					from == address(this) ||
+	// 					from == deadAddress ||
+	// 					from == communityWallet ||
+	// 					from == marketingWallet ||
+	// 					from == developerWallet ||
+	// 					to == owner() ||
+	// 					to == address(this) ||
+	// 					to == deadAddress ||
+	// 					to == communityWallet ||
+	// 					to == marketingWallet ||
+	// 					to == developerWallet,
+	// 				"ERC20: Token Trading Not Enabled. Be Patient Anon."
+	// 			);
+	// 		}
 
-			//when buy
-			if (
-				automatedMarketMakerPairs[from] &&
-				(to == owner() ||
-					to == address(this) ||
-					to == deadAddress ||
-					to == address(uniswapV2Router) ||
-					to == communityWallet ||
-					to == marketingWallet ||
-					to == developerWallet)
-			) {
-				if (restrictions) {
-					require(
-						amount <= restrictMaxTransaction,
-						"ERC20: Max Transaction Exceeded"
-					);
-					require(
-						amount + balanceOf(to) <= restrictMaxWallet,
-						"ERC20: Max Wallet Exceeded"
-					);
-				}
-			}
-			//when sell
-			else if (
-				automatedMarketMakerPairs[to] &&
-				(from == owner() ||
-					from == address(this) ||
-					from == deadAddress ||
-					from == address(uniswapV2Router) ||
-					from == communityWallet ||
-					from == marketingWallet ||
-					from == developerWallet)
-			) {
-				if (restrictions) {
-					require(
-						amount <= restrictMaxTransaction,
-						"ERC20: Max Transaction Exceeded"
-					);
-				}
-			} else if (
-				to != owner() &&
-				to != address(this) &&
-				to != deadAddress &&
-				to != address(uniswapV2Router) &&
-				to != communityWallet &&
-				to != marketingWallet &&
-				to != developerWallet
-			) {
-				require(
-					amount + balanceOf(to) <= restrictMaxWallet,
-					"ERC20: Max Wallet Exceeded"
-				);
-			}
-		}
+	// 		//when buy
+	// 		if (
+	// 			automatedMarketMakerPairs[from] &&
+	// 			(to == owner() ||
+	// 				to == address(this) ||
+	// 				to == deadAddress ||
+	// 				to == address(uniswapV2Router) ||
+	// 				to == communityWallet ||
+	// 				to == marketingWallet ||
+	// 				to == developerWallet)
+	// 		) {
+	// 			if (restrictions) {
+	// 				require(
+	// 					amount <= restrictMaxTransaction,
+	// 					"ERC20: Max Transaction Exceeded"
+	// 				);
+	// 				require(
+	// 					amount + balanceOf(to) <= restrictMaxWallet,
+	// 					"ERC20: Max Wallet Exceeded"
+	// 				);
+	// 			}
+	// 		}
+	// 		//when sell
+	// 		else if (
+	// 			automatedMarketMakerPairs[to] &&
+	// 			(from == owner() ||
+	// 				from == address(this) ||
+	// 				from == deadAddress ||
+	// 				from == address(uniswapV2Router) ||
+	// 				from == communityWallet ||
+	// 				from == marketingWallet ||
+	// 				from == developerWallet)
+	// 		) {
+	// 			if (restrictions) {
+	// 				require(
+	// 					amount <= restrictMaxTransaction,
+	// 					"ERC20: Max Transaction Exceeded"
+	// 				);
+	// 			}
+	// 		} else if (
+	// 			to != owner() &&
+	// 			to != address(this) &&
+	// 			to != deadAddress &&
+	// 			to != address(uniswapV2Router) &&
+	// 			to != communityWallet &&
+	// 			to != marketingWallet &&
+	// 			to != developerWallet
+	// 		) {
+	// 			require(
+	// 				amount + balanceOf(to) <= restrictMaxWallet,
+	// 				"ERC20: Max Wallet Exceeded"
+	// 			);
+	// 		}
+	// 	}
 
-		uint256 contractTokenBalance = balanceOf(address(this));
+	// 	uint256 contractTokenBalance = balanceOf(address(this));
 
-		bool canSwap = contractTokenBalance >= swapTokenAmount;
+	// 	bool canSwap = contractTokenBalance >= swapTokenAmount;
 
-		if (
-			canSwap &&
-			swappable &&
-			!swapping &&
-			!automatedMarketMakerPairs[from] &&
-			from != owner() &&
-			from != address(this) &&
-			from != deadAddress &&
-			from != communityWallet &&
-			from != marketingWallet &&
-			from != developerWallet &&
-			to != owner() &&
-			to != address(this) &&
-			to != deadAddress &&
-			to != communityWallet &&
-			to != marketingWallet &&
-			to != developerWallet
-		) {
-			swapping = true;
+	// 	if (
+	// 		canSwap &&
+	// 		swappable &&
+	// 		!swapping &&
+	// 		!automatedMarketMakerPairs[from] &&
+	// 		from != owner() &&
+	// 		from != address(this) &&
+	// 		from != deadAddress &&
+	// 		from != communityWallet &&
+	// 		from != marketingWallet &&
+	// 		from != developerWallet &&
+	// 		to != owner() &&
+	// 		to != address(this) &&
+	// 		to != deadAddress &&
+	// 		to != communityWallet &&
+	// 		to != marketingWallet &&
+	// 		to != developerWallet
+	// 	) {
+	// 		swapping = true;
 
-			distributeTax();
+	// 		distributeTax();
 
-			swapping = false;
-		}
+	// 		swapping = false;
+	// 	}
 
-		bool taxed = !swapping;
+	// 	bool taxed = !swapping;
 
-		if (
-			from == owner() ||
-			from == address(this) ||
-			from == deadAddress ||
-			from == communityWallet ||
-			from == marketingWallet ||
-			from == developerWallet ||
-			to == owner() ||
-			to == address(this) ||
-			to == deadAddress ||
-			to == communityWallet ||
-			to == marketingWallet ||
-			to == developerWallet
-		) {
-			taxed = false;
-		}
+	// 	if (
+	// 		from == owner() ||
+	// 		from == address(this) ||
+	// 		from == deadAddress ||
+	// 		from == communityWallet ||
+	// 		from == marketingWallet ||
+	// 		from == developerWallet ||
+	// 		to == owner() ||
+	// 		to == address(this) ||
+	// 		to == deadAddress ||
+	// 		to == communityWallet ||
+	// 		to == marketingWallet ||
+	// 		to == developerWallet
+	// 	) {
+	// 		taxed = false;
+	// 	}
 
-		uint256 fees = 0;
+	// 	uint256 fees = 0;
 
-		if (taxed) {
-			// Collect Sell Tax
-			if (automatedMarketMakerPairs[to] && taxation) {
-				if (taxLopsided) {
-					(, fees) = amount.tryMul(totalLopsidedSellTax);
-					(, fees) = fees.tryDiv(100);
-					communityTokens +=
-						(fees * communityLopsidedSellTax) /
-						totalLopsidedSellTax;
-					marketingTokens +=
-						(fees * marketingLopsidedSellTax) /
-						totalLopsidedSellTax;
-					developerTokens +=
-						(fees * developerLopsidedSellTax) /
-						totalLopsidedSellTax;
-				} else {
-					(, fees) = amount.tryMul(totalSellTax);
-					(, fees) = fees.tryDiv(100);
-					communityTokens += (fees * communityTax) / totalSellTax;
-					marketingTokens += (fees * marketingTax) / totalSellTax;
-					developerTokens += (fees * developerTax) / totalSellTax;
-				}
-			}
-			// Collect Buy Tax
-			else if (automatedMarketMakerPairs[from] && taxation) {
-				(, fees) = amount.tryMul(totalBuyTax);
-				(, fees) = fees.tryDiv(100);
-				communityTokens += (fees * communityTax) / totalBuyTax;
-				marketingTokens += (fees * marketingTax) / totalBuyTax;
-				developerTokens += (fees * developerTax) / totalBuyTax;
-			}
+	// 	if (taxed) {
+	// 		// Collect Sell Tax
+	// 		if (automatedMarketMakerPairs[to] && taxation) {
+	// 			if (taxLopsided) {
+	// 				(, fees) = amount.tryMul(totalLopsidedSellTax);
+	// 				(, fees) = fees.tryDiv(100);
+	// 				communityTokens +=
+	// 					(fees * communityLopsidedSellTax) /
+	// 					totalLopsidedSellTax;
+	// 				marketingTokens +=
+	// 					(fees * marketingLopsidedSellTax) /
+	// 					totalLopsidedSellTax;
+	// 				developerTokens +=
+	// 					(fees * developerLopsidedSellTax) /
+	// 					totalLopsidedSellTax;
+	// 			} else {
+	// 				(, fees) = amount.tryMul(totalSellTax);
+	// 				(, fees) = fees.tryDiv(100);
+	// 				communityTokens += (fees * communityTax) / totalSellTax;
+	// 				marketingTokens += (fees * marketingTax) / totalSellTax;
+	// 				developerTokens += (fees * developerTax) / totalSellTax;
+	// 			}
+	// 		}
+	// 		// Collect Buy Tax
+	// 		else if (automatedMarketMakerPairs[from] && taxation) {
+	// 			(, fees) = amount.tryMul(totalBuyTax);
+	// 			(, fees) = fees.tryDiv(100);
+	// 			communityTokens += (fees * communityTax) / totalBuyTax;
+	// 			marketingTokens += (fees * marketingTax) / totalBuyTax;
+	// 			developerTokens += (fees * developerTax) / totalBuyTax;
+	// 		}
 
-			if (fees > 0) {
-				super._transfer(from, address(this), fees);
-			}
+	// 		if (fees > 0) {
+	// 			super._transfer(from, address(this), fees);
+	// 		}
 
-			amount -= fees;
-		}
+	// 		amount -= fees;
+	// 	}
 
-		super._transfer(from, to, amount);
-	}
+	// 	super._transfer(from, to, amount);
+	// }
 
 	/**
 	 * @dev Helper function that swaps tokens in the contract for ETH

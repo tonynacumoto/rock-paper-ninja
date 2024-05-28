@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract EscrowContract {
-	IERC20 public token;
+	ERC20 public token;
 	address public feeAccount;
 	uint256 public feePercent; // Represented as a percentage, e.g., 10 for 10%
 
@@ -40,7 +40,7 @@ contract EscrowContract {
 
 	constructor(address _token, address _feeAccount, uint256 _feePercent) {
 		require(_feePercent <= 100, "Fee percent cannot be more than 100");
-		token = IERC20(_token);
+		token = ERC20(_token);
 		feeAccount = _feeAccount;
 		feePercent = _feePercent;
 	}
@@ -48,8 +48,8 @@ contract EscrowContract {
 	function createEscrow(uint256 amount, string memory str) external {
 		require(amount > 0, "Amount must be greater than 0");
 		require(
-			token.transferFrom(msg.sender, address(this), amount),
-			"Token transfer failed"
+			token.allowance(msg.sender, address(this)) > amount * 2,
+			"Token must have allowance over stake amount"
 		);
 
 		escrows[nextEscrowId] = Escrow({
@@ -64,18 +64,24 @@ contract EscrowContract {
 	}
 
 	function fillEscrow(uint256 escrowId, string memory str) external {
+		uint256 totalAmount = escrow.amount * 2;
 		Escrow storage escrow = escrows[escrowId];
 		require(!escrow.filled, "Escrow already filled");
 		require(
-			token.transferFrom(msg.sender, address(this), escrow.amount),
-			"Token transfer failed"
+			token.allowance(msg.sender, address(this)) > totalAmount,
+			"Token must have allowance over stake amount"
 		);
 
 		escrow.filled = true;
 
-		uint256 totalAmount = escrow.amount * 2;
 		uint256 feeAmount = (totalAmount * feePercent) / 100;
 		uint256 winnerAmount = totalAmount - feeAmount;
+
+		require(token.transfer(feeAccount, feeAmount), "Fee transfer failed");
+		require(
+			token.transferFrom(msg.sender, address(this), escrow.amount),
+			"Token transfer failed"
+		);
 
 		// logic for determining winner
 		// would be great to compare encrypted data
@@ -85,7 +91,13 @@ contract EscrowContract {
 			? msg.sender
 			: escrow.user1;
 
-		require(token.transfer(feeAccount, feeAmount), "Fee transfer failed");
+		// require(token.transfer(winner, winnerAmount), "Winner transfer failed");
+		if (winner == msg.sender) {
+			require(
+				token.transferFrom(escrow.user1, msg.sender, winnerAmount),
+				"Token transfer failed"
+			);
+		}
 		emit EscrowResolved(
 			escrowId,
 			winner,
@@ -93,8 +105,6 @@ contract EscrowContract {
 			feeAccount,
 			feeAmount
 		);
-
-		require(token.transfer(winner, winnerAmount), "Winner transfer failed");
 		emit EscrowFilled(escrowId, msg.sender, escrow.amount, str);
 	}
 }
