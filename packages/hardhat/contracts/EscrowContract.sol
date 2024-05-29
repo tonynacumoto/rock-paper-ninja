@@ -48,7 +48,7 @@ contract EscrowContract {
 	function createEscrow(uint256 amount, string memory str) external {
 		require(amount > 0, "Amount must be greater than 0");
 		require(
-			token.allowance(msg.sender, address(this)) > amount * 2,
+			token.allowance(msg.sender, address(this)) > (amount * 2),
 			"Token must have allowance over stake amount"
 		);
 
@@ -64,23 +64,16 @@ contract EscrowContract {
 	}
 
 	function fillEscrow(uint256 escrowId, string memory str) external {
-		uint256 totalAmount = escrow.amount * 2;
 		Escrow storage escrow = escrows[escrowId];
 		require(!escrow.filled, "Escrow already filled");
+
+		uint256 totalAmount = escrow.amount * 2;
+		uint256 feeAmount = (totalAmount * feePercent) / 100;
+		uint256 winnerAmount = escrow.amount - feeAmount;
+
 		require(
 			token.allowance(msg.sender, address(this)) > totalAmount,
 			"Token must have allowance over stake amount"
-		);
-
-		escrow.filled = true;
-
-		uint256 feeAmount = (totalAmount * feePercent) / 100;
-		uint256 winnerAmount = totalAmount - feeAmount;
-
-		require(token.transfer(feeAccount, feeAmount), "Fee transfer failed");
-		require(
-			token.transferFrom(msg.sender, address(this), escrow.amount),
-			"Token transfer failed"
 		);
 
 		// logic for determining winner
@@ -91,13 +84,20 @@ contract EscrowContract {
 			? msg.sender
 			: escrow.user1;
 
+		address loser = bytes(str).length >= bytes(escrow.string1).length
+			? escrow.user1
+			: msg.sender;
+
+		require(
+			token.transferFrom(loser, feeAccount, feeAmount),
+			"Fee transfer to fee account failed"
+		);
 		// require(token.transfer(winner, winnerAmount), "Winner transfer failed");
-		if (winner == msg.sender) {
-			require(
-				token.transferFrom(escrow.user1, msg.sender, winnerAmount),
-				"Token transfer failed"
-			);
-		}
+		require(
+			token.transferFrom(loser, winner, winnerAmount),
+			"Token transfer to winner failed"
+		);
+		escrow.filled = true;
 		emit EscrowResolved(
 			escrowId,
 			winner,
