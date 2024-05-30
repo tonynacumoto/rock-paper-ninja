@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   }
 
   const accessToken = new AccessToken({
-    apiKey: process.env.HUDDLE_API_KEY as string,
+    apiKey: process.env.API_KEY!,
     roomId: roomId as string,
     role: Role.HOST,
     permissions: {

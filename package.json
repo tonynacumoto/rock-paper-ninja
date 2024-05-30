@@ -29,7 +29,7 @@
     "next:serve": "yarn workspace @se-2/nextjs serve",
     "precommit": "lint-staged",
     "prepare": "install-self-peers -- --ignore-scripts",
-    "start": "yarn workspace @se-2/nextjs dev",
+    "start": "yarn workspace @se-2/nextjs start",
     "test": "yarn hardhat:test",
     "vercel": "yarn workspace @se-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo",
