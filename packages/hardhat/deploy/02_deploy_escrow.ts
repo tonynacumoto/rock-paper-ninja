@@ -25,7 +25,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   await deploy("Escrow", {
     from: deployer,
     // Contract constructor arguments
-    args: ["0x5FbDB2315678afecb367f032d93F642f64180aa3", 10, "0x1DEA6076bC003a957B1E4774A93a8D9aB0CBC1C1"],
+    args: [
+      "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      1,
+      100000000000000,
+      "0x1DEA6076bC003a957B1E4774A93a8D9aB0CBC1C1",
+    ],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
