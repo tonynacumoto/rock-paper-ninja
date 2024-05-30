@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AccessToken, Role } from "@huddle01/server-sdk/auth";
 
 export const dynamic = "force-dynamic";
