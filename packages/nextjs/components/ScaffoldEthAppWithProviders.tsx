@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { HuddleClient, HuddleProvider } from "@huddle01/react";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
@@ -49,21 +50,28 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
   const isDarkMode = resolvedTheme === "dark";
   const [mounted, setMounted] = useState(false);
 
+  const huddleClient = new HuddleClient({
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    projectId: process.env.NEXT_PUBLIC_HUDDLE_PROJECT_ID!,
+  });
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <ProgressBar />
-        <RainbowKitProvider
-          avatar={BlockieAvatar}
-          theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
-        >
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <HuddleProvider client={huddleClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <ProgressBar />
+          <RainbowKitProvider
+            avatar={BlockieAvatar}
+            theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
+          >
+            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </HuddleProvider>
   );
 };
