@@ -63,7 +63,10 @@ contract EscrowContract {
 		nextEscrowId++;
 	}
 
-	function fillEscrow(uint256 escrowId, string memory str) external {
+	function fillEscrow(
+		uint256 escrowId,
+		string memory str
+	) external returns (address) {
 		Escrow storage escrow = escrows[escrowId];
 		require(!escrow.filled, "Escrow already filled");
 
@@ -106,5 +109,6 @@ contract EscrowContract {
 			feeAmount
 		);
 		emit EscrowFilled(escrowId, msg.sender, escrow.amount, str);
+		return winner;
 	}
 }

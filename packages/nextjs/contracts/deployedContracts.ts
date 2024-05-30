@@ -6,259 +6,27 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
   31337: {
-    EscrowContract: {
-      address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    Escrow: {
+      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
       abi: [
         {
           inputs: [
             {
-              internalType: "address",
-              name: "_token",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_feeAccount",
+              internalType: "contract IERC20",
+              name: "_escrowToken",
               type: "address",
             },
             {
               internalType: "uint256",
-              name: "_feePercent",
+              name: "_fee",
               type: "uint256",
             },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "escrowId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "str",
-              type: "string",
-            },
-          ],
-          name: "EscrowCreated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "escrowId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "str",
-              type: "string",
-            },
-          ],
-          name: "EscrowFilled",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "escrowId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "winner",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "feeRecipient",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "feeAmount",
-              type: "uint256",
-            },
-          ],
-          name: "EscrowResolved",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "str",
-              type: "string",
-            },
-          ],
-          name: "createEscrow",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "escrows",
-          outputs: [
             {
               internalType: "address",
-              name: "user1",
-              type: "address",
-            },
-            {
-              internalType: "string",
-              name: "string1",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "filled",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "feeAccount",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
+              name: "_initialOwner",
               type: "address",
             },
           ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "feePercent",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "escrowId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "str",
-              type: "string",
-            },
-          ],
-          name: "fillEscrow",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "nextEscrowId",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "token",
-          outputs: [
-            {
-              internalType: "contract ERC20",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    Token: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      abi: [
-        {
-          inputs: [],
           stateMutability: "nonpayable",
           type: "constructor",
         },
@@ -266,185 +34,12 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
-              name: "spender",
+              name: "target",
               type: "address",
             },
-            {
-              internalType: "uint256",
-              name: "allowance",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "needed",
-              type: "uint256",
-            },
           ],
-          name: "ERC20InsufficientAllowance",
+          name: "AddressEmptyCode",
           type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "sender",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "needed",
-              type: "uint256",
-            },
-          ],
-          name: "ERC20InsufficientBalance",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "approver",
-              type: "address",
-            },
-          ],
-          name: "ERC20InvalidApprover",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "receiver",
-              type: "address",
-            },
-          ],
-          name: "ERC20InvalidReceiver",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "sender",
-              type: "address",
-            },
-          ],
-          name: "ERC20InvalidSender",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "spender",
-              type: "address",
-            },
-          ],
-          name: "ERC20InvalidSpender",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "spender",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "Approval",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "from",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "to",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "Transfer",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "spender",
-              type: "address",
-            },
-          ],
-          name: "allowance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "spender",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "approve",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
         },
         {
           inputs: [
@@ -454,190 +49,76 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "balanceOf",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
+          name: "AddressInsufficientBalance",
+          type: "error",
         },
         {
           inputs: [],
-          name: "decimals",
-          outputs: [
+          name: "FailedInnerCall",
+          type: "error",
+        },
+        {
+          inputs: [
             {
-              internalType: "uint8",
-              name: "",
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+          ],
+          name: "SafeERC20FailedOperation",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "enum Escrow.EscrowType",
+              name: "escrowType",
               type: "uint8",
             },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "name",
-          outputs: [
             {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "symbol",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalSupply",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "to",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "transfer",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "from",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "to",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "transferFrom",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        allowance: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        approve: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        balanceOf: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        decimals: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        name: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        symbol: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        totalSupply: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        transfer: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        transferFrom: "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-      },
-    },
-  },
-  11155111: {
-    EscrowContract: {
-      address: "0x266cC078750D93FDB44EAb1035309F085A43C876",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_token",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_feeAccount",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_feePercent",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
+              indexed: false,
               internalType: "uint256",
               name: "escrowId",
               type: "uint256",
             },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "str",
-              type: "string",
-            },
           ],
-          name: "EscrowCreated",
+          name: "Deposited",
           type: "event",
         },
         {
@@ -645,30 +126,18 @@ const deployedContracts = {
           inputs: [
             {
               indexed: true,
-              internalType: "uint256",
-              name: "escrowId",
-              type: "uint256",
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
             },
             {
               indexed: true,
               internalType: "address",
-              name: "user",
+              name: "newOwner",
               type: "address",
             },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "str",
-              type: "string",
-            },
           ],
-          name: "EscrowFilled",
+          name: "OwnershipTransferred",
           type: "event",
         },
         {
@@ -676,12 +145,6 @@ const deployedContracts = {
           inputs: [
             {
               indexed: true,
-              internalType: "uint256",
-              name: "escrowId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
               internalType: "address",
               name: "winner",
               type: "address",
@@ -694,19 +157,20 @@ const deployedContracts = {
             },
             {
               indexed: false,
-              internalType: "address",
-              name: "feeRecipient",
-              type: "address",
-            },
-            {
-              indexed: false,
               internalType: "uint256",
-              name: "feeAmount",
+              name: "escrowId",
               type: "uint256",
             },
           ],
-          name: "EscrowResolved",
+          name: "Released",
           type: "event",
+        },
+        {
+          inputs: [],
+          name: "depositEth",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
         },
         {
           inputs: [
@@ -715,15 +179,23 @@ const deployedContracts = {
               name: "amount",
               type: "uint256",
             },
-            {
-              internalType: "string",
-              name: "str",
-              type: "string",
-            },
           ],
-          name: "createEscrow",
+          name: "depositToken",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "escrowToken",
+          outputs: [
+            {
+              internalType: "contract IERC20",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -737,14 +209,24 @@ const deployedContracts = {
           name: "escrows",
           outputs: [
             {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              internalType: "enum Escrow.EscrowType",
+              name: "escrowType",
+              type: "uint8",
+            },
+            {
               internalType: "address",
-              name: "user1",
+              name: "depositor1",
               type: "address",
             },
             {
-              internalType: "string",
-              name: "string1",
-              type: "string",
+              internalType: "address",
+              name: "depositor2",
+              type: "address",
             },
             {
               internalType: "uint256",
@@ -753,21 +235,13 @@ const deployedContracts = {
             },
             {
               internalType: "bool",
-              name: "filled",
+              name: "isReleased",
               type: "bool",
             },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "feeAccount",
-          outputs: [
             {
-              internalType: "address",
-              name: "",
-              type: "address",
+              internalType: "string",
+              name: "gameData",
+              type: "string",
             },
           ],
           stateMutability: "view",
@@ -775,7 +249,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "feePercent",
+          name: "fee",
           outputs: [
             {
               internalType: "uint256",
@@ -793,20 +267,100 @@ const deployedContracts = {
               name: "escrowId",
               type: "uint256",
             },
+          ],
+          name: "joinEscrow",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "escrowId",
+              type: "uint256",
+            },
+            {
+              internalType: "address payable",
+              name: "recipient",
+              type: "address",
+            },
+          ],
+          name: "recoverFunds",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "escrowId",
+              type: "uint256",
+            },
+            {
+              internalType: "address payable",
+              name: "winner",
+              type: "address",
+            },
             {
               internalType: "string",
-              name: "str",
+              name: "gameData",
               type: "string",
             },
           ],
-          name: "fillEscrow",
+          name: "releaseFunds",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },
         {
           inputs: [],
-          name: "nextEscrowId",
+          name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "userEscrows",
           outputs: [
             {
               internalType: "uint256",
@@ -817,24 +371,15 @@ const deployedContracts = {
           stateMutability: "view",
           type: "function",
         },
-        {
-          inputs: [],
-          name: "token",
-          outputs: [
-            {
-              internalType: "contract ERC20",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
       ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        owner: "@openzeppelin/contracts/access/Ownable.sol",
+        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+      },
     },
     Token: {
-      address: "0x17829D7F8bD71aC3f63F034eb31f645ad2409fA8",
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [],

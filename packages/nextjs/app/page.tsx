@@ -4,8 +4,17 @@ import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
 
+// import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
+  // const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("EscrowContract");
+  // const { writeContractAsync: writeTokenAsync } = useScaffoldWriteContract("Token");
+  // const { data: tokenData } = useScaffoldReadContract({
+  //   contractName: "Token",
+  //   functionName: "allowance",
+  //   args: [address, ],
+  // });
 
   return (
     <>
