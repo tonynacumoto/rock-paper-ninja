@@ -2541,6 +2541,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ~5.40.0
     "@uniswap/sdk-core": ~4.0.1
     "@uniswap/v2-sdk": ~3.0.1
+    "@vercel/kv": ^2.0.0
     abitype: 1.0.2
     autoprefixer: ~10.4.12
     blo: ~1.0.1
@@ -3769,6 +3770,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@upstash/redis@npm:^1.31.3":
+  version: 1.31.3
+  resolution: "@upstash/redis@npm:1.31.3"
+  dependencies:
+    crypto-js: ^4.2.0
+  checksum: 110117dd3864f19fa695709f48833113b30e8aa95390e4ef7a11fdc96f3bc9ef6b6792ac69474f0cb5200187f29a7711591ad51ba3067f77d52842244c396798
+  languageName: node
+  linkType: hard
+
 "@vanilla-extract/css@npm:1.14.0":
   version: 1.14.0
   resolution: "@vanilla-extract/css@npm:1.14.0"
@@ -3892,6 +3902,15 @@ __metadata:
     "@vercel/static-config": 3.0.0
     ts-morph: 12.0.0
   checksum: a13cdacfba84ff10ca2036815ea9d0e36fa5d8fe7e5af2083a8cf93a3b47d5e9c102be491d1882c08b555764804f4092cf10ba5e7d4b2495fb434bda1610f4de
+  languageName: node
+  linkType: hard
+
+"@vercel/kv@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@vercel/kv@npm:2.0.0"
+  dependencies:
+    "@upstash/redis": ^1.31.3
+  checksum: 16519f42670efce81cea64229f34aeed271e0a9a25329f5a1a0b49aa77f87e6a71a49d5c4593571c0e07f2d68a4e4288feb773cb44d0155df494de132b8eece0
   languageName: node
   linkType: hard
 
@@ -6181,6 +6200,13 @@ __metadata:
   version: 0.0.2
   resolution: "crypt@npm:0.0.2"
   checksum: baf4c7bbe05df656ec230018af8cf7dbe8c14b36b98726939cef008d473f6fe7a4fad906cfea4062c93af516f1550a3f43ceb4d6615329612c6511378ed9fe34
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
   languageName: node
   linkType: hard
 
