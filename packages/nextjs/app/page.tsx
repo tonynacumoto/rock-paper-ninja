@@ -10,6 +10,14 @@ import { useAccount } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract, useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
+const cleanData = (rawData: any[] | readonly [bigint, number, string, string, bigint, boolean, string]) =>
+  rawData.map(item => (typeof item === "bigint" ? BigInt(item).toString() : item));
+
+const shortenHash = (hash: string) => {
+  if (!hash) return;
+  return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
+};
+
 const store = createClient({
   url: process.env.NEXT_PUBLIC_KV_REST_API_URL,
   token: process.env.NEXT_PUBLIC_KV_REST_API_TOKEN,
@@ -42,30 +50,33 @@ const getStore = async ({ chain, id }: { chain: number; id: string }) => {
 const EscrowButton = ({ id, chainId }: { id: bigint; chainId: number }) => {
   const escrowInt = BigInt(id).toString();
   const [match, setMatch] = useState<object>();
+  const { address } = useAccount();
+
   const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("Escrow");
-  const { data = [] } = useScaffoldReadContract({
+  const { data: smartContractData = [] } = useScaffoldReadContract({
     contractName: "Escrow",
     functionName: "escrows",
     args: [id as bigint],
   });
-  const [, , , depositor2, amount, ,] = data;
-  const isFilled = depositor2 !== DEAD_ADDRESS;
+  const [sc_id, , , depositor2, amount, ,] = cleanData(smartContractData);
+  console.log("data from contract:", sc_id, smartContractData);
+  const isReady = depositor2 !== DEAD_ADDRESS;
   useEffect(() => {
     async function fetchMatch() {
-      const match = await getStore({ id: escrowInt, chain: chainId });
-      console.log("use eff match", match);
-      setMatch(match as object);
+      const _match = await getStore({ id: escrowInt, chain: chainId });
+      setMatch(_match as object);
     }
+    console.log("do matches match", match);
     if (!match) {
       fetchMatch();
     }
-  }, [match, setMatch, chainId, escrowInt]); // Include 'chainId' and 'escrowInt' in the dependency array
-  console.log("match", match);
+  }, [match, setMatch, chainId, escrowInt]);
+  console.log("match", escrowInt, match);
   return (
-    <>
+    <div className="flex flex-col">
       <button
         className="btn btn-primary"
-        disabled={isFilled}
+        disabled={isReady}
         onClick={async () => {
           console.log("writing to blockchain");
           try {
@@ -75,14 +86,15 @@ const EscrowButton = ({ id, chainId }: { id: bigint; chainId: number }) => {
               value: parseEther("0.1"),
             });
             console.log("block writeRes", writeResponse, escrowInt, chainId);
-            const cleanData = (rawData: any[] | readonly [bigint, number, string, string, bigint, boolean, string]) =>
-              rawData.map(item => (typeof item === "bigint" ? BigInt(item).toString() : item));
+
+            const sanitizedData = cleanData(smartContractData);
+            sanitizedData[3] = address;
             const setResponse = await setStore({
               chain: chainId,
               id: escrowInt,
               matchData: {
                 id: `${chainId}-${escrowInt}`,
-                smartContractData: cleanData(data),
+                smartContractData: sanitizedData,
                 winner: undefined,
                 loser: undefined,
                 winnerHands: [],
@@ -96,9 +108,13 @@ const EscrowButton = ({ id, chainId }: { id: bigint; chainId: number }) => {
           }
         }}
       >
-        {isFilled ? `Match ${escrowInt} underway` : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
+        {isReady ? `Match ${escrowInt} underway` : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
       </button>
-    </>
+      <div className="flex flex-col">
+        {match && <button className="btn btn-sm">{shortenHash(smartContractData[2] ?? "")}</button>}
+        {match && <button className="btn btn-sm">{shortenHash(smartContractData[3] ?? "")}</button>}
+      </div>
+    </div>
   );
 };
 
@@ -145,7 +161,7 @@ const Home: NextPage = () => {
             >
               Start .1 ETH Match
             </button>
-            <div className="flex space-x-2 justify-center">
+            <div className="flex space-x-2 space-y-2 justify-center max-w-lg flex-wrap">
               {allEscrowIds &&
                 allEscrowIds?.map(escrowId => {
                   return <EscrowButton key={escrowId} id={escrowId} chainId={targetNetwork.id} />;
