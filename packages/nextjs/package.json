@@ -5,13 +5,13 @@
   "scripts": {
     "build": "next build",
     "check-types": "tsc --noEmit --incremental",
-    "dev": "next dev",
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
     "lint": "next lint",
     "serve": "next start",
     "start": "next dev",
     "vercel": "vercel",
-    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
+    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
+    "fleek": "fleek sites deploy"
   },
   "dependencies": {
     "@heroicons/react": "~2.0.11",
@@ -24,11 +24,12 @@
     "@uniswap/v2-sdk": "~3.0.1",
     "blo": "~1.0.1",
     "burner-connector": "~0.0.6",
+    "cors": "^2.8.5",
     "daisyui": "4.5.0",
+    "express": "^4.19.2",
     "next": "~14.0.4",
     "next-themes": "~0.2.1",
     "nprogress": "~0.2.0",
-    "partysocket": "1.0.1",
     "qrcode.react": "~3.1.0",
     "react": "~18.2.0",
     "react-copy-to-clipboard": "~5.1.0",
@@ -42,6 +43,8 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "~4.1.1",
+    "@types/cors": "^2",
+    "@types/express": "^4",
     "@types/node": "^17.0.45",
     "@types/nprogress": "^0",
     "@types/react": "^18.0.21",
@@ -53,7 +56,6 @@
     "eslint-config-next": "~14.0.4",
     "eslint-config-prettier": "~8.5.0",
     "eslint-plugin-prettier": "~4.2.1",
-    "partykit": "0.0.105",
     "postcss": "~8.4.16",
     "prettier": "~2.8.4",
     "tailwindcss": "~3.4.3",
