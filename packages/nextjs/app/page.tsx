@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { createClient } from "@vercel/kv";
 import type { NextPage } from "next";
 import { parseEther } from "viem";
@@ -71,6 +72,13 @@ const Home: NextPage = () => {
           <div className="flex justify-center items-center space-x-2">
             <p className="my-2 font-medium">Connected Address:</p>
             <Address address={connectedAddress} />
+          </div>
+          <div className="flex justify-center items-center space-x-2 mt-2">
+            <Link href="/lobby">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Go to lobby
+              </button>
+            </Link>
           </div>
           <div className="space-y-2 justify-center flex flex-col mt-4">
             <button
