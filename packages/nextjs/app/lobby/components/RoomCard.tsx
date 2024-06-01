@@ -2,19 +2,22 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getPreviewPeers } from "~~/app/actions";
+import { getParticipantsList } from "~~/app/actions";
 
 export default function RoomCard({ roomId }: { roomId: string }) {
   const [loading, setLoading] = useState(false);
-  const [activePeers, setActivePeers] = useState<string[]>([]);
+  const [activePeers, setActivePeers] = useState<any[]>([]);
   useEffect(() => {
-    async function fetchRoom() {
+    async function getParticipants() {
       setLoading(true);
-      const data = await getPreviewPeers(roomId);
-      setActivePeers(data);
+      const data = await getParticipantsList(roomId);
+      console.log(data);
+      if (data) {
+        setActivePeers(data?.participants);
+      }
       setLoading(false);
     }
-    fetchRoom();
+    getParticipants();
   }, [roomId]);
   return (
     <Link href={`/${roomId}`}>

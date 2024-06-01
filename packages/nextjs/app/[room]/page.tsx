@@ -1,9 +1,9 @@
+import { generateAccessToken } from "../actions";
 import Room from "./components/Room";
+import { Role } from "@huddle01/server-sdk/auth";
 
 export default async function Page({ params }: { params: { room: string } }) {
-  const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/huddle/token?roomId=${params.room}`);
-  const tokenData = (await tokenResponse.json()) as { token: string };
-  const { token } = tokenData;
+  const token = await generateAccessToken(params.room, Role.CO_HOST);
 
   return (
     <main className="flex min-h-screen p-24">
