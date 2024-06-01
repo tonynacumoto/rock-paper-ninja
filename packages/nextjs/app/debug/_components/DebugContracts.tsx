@@ -9,9 +9,7 @@ import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const selectedContractStorageKey = "scaffoldEth2.selectedContract";
 const contractsData = getAllContracts();
-console.log("contracts", contractsData);
 const contractNames = Object.keys(contractsData) as ContractName[];
-console.log("names", contractNames);
 
 export function DebugContracts() {
   const [selectedContract, setSelectedContract] = useLocalStorage<ContractName>(
