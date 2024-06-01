@@ -15,6 +15,9 @@ const nextConfig = {
     return config;
   },
   trailingSlash: true,
+  images: {
+    domains: ['localhost'],
+  },
 };
 
 module.exports = nextConfig;
