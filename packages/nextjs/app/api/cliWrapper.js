@@ -13,7 +13,13 @@ function runCliCommand(userInput, callback) {
   }
 
   // This command will first export our private key, and then run the Lilypad SDXL module with the prompt provided by the user.
-  const command = `export WEB3_PRIVATE_KEY=${web3PrivateKey} && lilypad run sdxl-pipeline:v1.0-base-lilypad3 -i PromptEnv="PROMPT=${userInput}"`;
+  // const command = `export WEB3_PRIVATE_KEY=${web3PrivateKey} && lilypad run sdxl-pipeline:v1.0-base-lilypad3 -i PromptEnv="PROMPT=${userInput}"`;
+  // const command = `export WEB3_PRIVATE_KEY=${web3PrivateKey} && lilypad run sdxl-pipeline:v0.9-base-lilypad3 -i PromptEnv="PROMPT=cat running in space"`;
+  // const command = `export WEB3_PRIVATE_KEY=${web3PrivateKey} && lilypad run sdxl-pipeline:v1.0-base-lilypad3 -i Prompt="an astronaut floating against a white background"`;
+  const command = `export WEB3_PRIVATE_KEY=${web3PrivateKey} && lilypad run sdxl-pipeline:v1.0-base-lilypad3 -i Prompt="${userInput}"`;
+  console.log("UserInput: ", userInput);
+
+
 
   // This is a callback function to handle any errors when calling runCliCommand function.
   exec(command, async (error, stdout, stderr) => {

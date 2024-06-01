@@ -8,7 +8,42 @@ const IpfsPage: React.FC = () => {
   const [cid, setCid] = useState(null);
   const [response, setResponse] = useState(null);
   const [jsonData, setJsonData] = useState(null);
+  const [url, setUrl] = useState("");
 
+  const progressCallback = progressData => {
+    let percentageDone = 100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
+    console.log(percentageDone);
+  };
+
+  const getFileFromUrl = async (url) => {
+    const response = await fetch(url);
+    const data = await response.blob();
+    const file = new File([data], "filename", { type: data.type });
+  
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    const fileList = dataTransfer.files;
+  
+    return fileList;
+  };
+
+  const uploadFile = async file => {
+    const apiKey = process.env.NEXT_PUBLIC_LIGHTHOUSE;
+    console.log("Uploading file:", file);
+    try {
+      const output = await lighthouse.upload(file, apiKey, false, null, progressCallback);
+      console.log("File Status:", output);
+      console.log("Visit at https://gateway.lighthouse.storage/ipfs/" + output.data.Hash);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  const handleUrlSubmit = async (event) => {
+    event.preventDefault();
+    const fileList = await getFileFromUrl(url);
+    uploadFile(fileList);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const text = JSON.stringify({
@@ -55,6 +90,11 @@ const IpfsPage: React.FC = () => {
             packages / nextjs / app / ipfs / page.tsx
           </code>{" "}
         </p>
+        <form onSubmit={handleUrlSubmit}>
+          <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder="Enter URL" />
+          <button type="submit">Upload from URL</button>
+        </form>
+        <input onChange={e => uploadFile(e.target.files)} type="file" />
       </div>
     </main>
   );
