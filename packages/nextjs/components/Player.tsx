@@ -2,7 +2,10 @@
 "use client";
 
 import { setStore } from "~~/utils/store";
-
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { getAccount } from '@wagmi/core'
+import { privateKeyToAccount } from 'viem/accounts';
+import { wagmiConfig } from "~~/services/web3/wagmiConfig"
 
 const determineWinner = (throw1: string, throw2: string) => {
   console.log(throw1, throw2)
@@ -46,9 +49,24 @@ const Player = ({
   const alreadyThrown = round < myThrows.length;
   const winLosses = winLossRecord({ throws1: match.player1.throws, throws2: match.player2.throws });
   const bothHaveGone = match.player1.throws.length === match.player2.throws.length;
-  const triggerEnd = (winner: string) => {
-    debugger;
-    console.log('winner', winner)
+  const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("Escrow");
+  const { connector } = getAccount(wagmiConfig);
+  const account = privateKeyToAccount(`0x${process.env.NEXT_PUBLIC_OWNER_PK}`);
+
+  const triggerEnd = async (winner: string) => {
+    const winnerAddress = match[winner].address
+    try {
+      console.log('account', account, connector)
+      debugger;
+      const writeResponse = await writeEscrowAsync({
+        functionName: "releaseFunds",
+        args: [match.smartContractData[0], winnerAddress, JSON.stringify(match)],
+        account,
+      });
+      console.log('writeResponse', writeResponse)
+    } catch (error) {
+      console.log('error releasing', error)
+    }
   }
   // console.log("already", alreadyThrown, match.round, match[player].throws.length);
   const handleThrow = ({ throwValue }: { throwValue: any }) => {
@@ -114,6 +132,7 @@ const Player = ({
           </div>
         );
       })}
+      {/* <button onClick={() => triggerEnd('player1')}>trigger end</button> */}
     </div>
   );
 };

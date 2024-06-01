@@ -57,7 +57,14 @@ const Home: NextPage = () => {
             <div className="flex justify-center max-w-lg flex-wrap flex-col-reverse">
               {allEscrowIds &&
                 allEscrowIds?.map(escrowId => {
-                  return <Match key={escrowId} id={escrowId} chainId={targetNetwork.id} />;
+                  return (
+                    <div key={escrowId} className="card w-96 bg-base-100 shadow-xl mb-4">
+                      <div className="card-body">
+                        <Match key={escrowId} id={escrowId} chainId={targetNetwork.id} />
+                      </div>
+                    </div>
+                  );
+                  return;
                 })}
             </div>
           </div>
