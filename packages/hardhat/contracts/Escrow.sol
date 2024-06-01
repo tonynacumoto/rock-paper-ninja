@@ -36,10 +36,15 @@ contract Escrow is Ownable {
 
 	mapping(uint256 => EscrowStruct) public escrows;
 	mapping(address => uint256[]) public userEscrows;
-	function getEscrows(
+	uint256[] public escrowIds; // keeps track of escrows
+
+	function getAllUserEscrows(
 		address userAddress
 	) external view returns (uint256[] memory) {
 		return userEscrows[userAddress];
+	}
+	function getAllEscrows() external view returns (uint256[] memory) {
+		return escrowIds;
 	}
 
 	/**
@@ -128,6 +133,7 @@ contract Escrow is Ownable {
 		});
 
 		userEscrows[msg.sender].push(escrowId);
+		escrowIds.push(escrowId);
 		emit Deposited(msg.sender, depositAmount, EscrowType.ETH, escrowId);
 	}
 
@@ -163,6 +169,7 @@ contract Escrow is Ownable {
 		});
 
 		userEscrows[msg.sender].push(escrowId);
+		escrowIds.push(escrowId);
 		emit Deposited(msg.sender, depositAmount, EscrowType.ERC20, escrowId);
 	}
 
