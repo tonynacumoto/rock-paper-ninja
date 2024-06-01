@@ -134,6 +134,7 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
                 id: `${chainId}-${escrowInt}`,
                 smartContractData: sanitizedData,
                 round: 0,
+                firstTo: 2,
                 player1: {
                   address: sanitizedData[2],
                   throws: [],

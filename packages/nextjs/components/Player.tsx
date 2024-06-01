@@ -3,6 +3,7 @@
 
 import { setStore } from "~~/utils/store";
 
+
 const determineWinner = (throw1: string, throw2: string) => {
   console.log(throw1, throw2)
   if (throw1 === throw2) {
@@ -45,6 +46,10 @@ const Player = ({
   const alreadyThrown = round < myThrows.length;
   const winLosses = winLossRecord({ throws1: match.player1.throws, throws2: match.player2.throws });
   const bothHaveGone = match.player1.throws.length === match.player2.throws.length;
+  const triggerEnd = (winner: string) => {
+    debugger;
+    console.log('winner', winner)
+  }
   // console.log("already", alreadyThrown, match.round, match[player].throws.length);
   const handleThrow = ({ throwValue }: { throwValue: any }) => {
     debugger;
@@ -57,9 +62,14 @@ const Player = ({
       }
     };
     const _bothHaveGone = updatedData[player].throws.length <= otherPlayer.throws.length;
-    if (_bothHaveGone) updatedData.round++;
-    // updatedData.round = 4;
-    debugger;
+    if (_bothHaveGone) {
+      debugger;
+      updatedData.round++;
+      const player1WinCount = winLosses.filter((winner: string) => winner === 'player1').length;
+      const player2WinCount = winLosses.filter((winner: string) => winner === 'player2').length;
+      if (player1WinCount === match.firstTo) { triggerEnd('player1') }
+      if (player2WinCount === match.firstTo) { triggerEnd('player2') }
+    }
     setStore({
       key: storeKey,
       data: updatedData,
