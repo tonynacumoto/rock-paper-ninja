@@ -49,9 +49,12 @@ const Home: NextPage = () => {
                 }
               }}
             >
-              Start .1 ETH Match
+              Start .1 ETH Match - Best of 3
             </button>
-            <div className="flex justify-center max-w-lg flex-wrap mt-4">
+            <div className="flex flex-col w-full border-opacity-50">
+              <div className="divider">MATCHES</div>
+            </div>
+            <div className="flex justify-center max-w-lg flex-wrap flex-col-reverse">
               {allEscrowIds &&
                 allEscrowIds?.map(escrowId => {
                   return <Match key={escrowId} id={escrowId} chainId={targetNetwork.id} />;

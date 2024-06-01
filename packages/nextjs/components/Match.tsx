@@ -7,17 +7,9 @@ import { parseEther } from "viem";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { cleanBigIntData, shortenHash } from "~~/utils/scaffold-eth/common";
+import { ZERO_ADDRESS, cleanBigIntData, shortenHash } from "~~/utils/scaffold-eth/common";
 import { getStore, setStore } from "~~/utils/store";
 
-const DEAD_ADDRESS = "0x0000000000000000000000000000000000000000";
-const defaultMatchData = {
-  winner: undefined,
-  loser: undefined,
-  winnerHands: [],
-  loserHands: [],
-  date: new Date(),
-};
 /*
  *
  *
@@ -38,41 +30,10 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
     args: [id as bigint],
   });
   const [, , , depositor2, amount, ,] = cleanBigIntData(smartContractData);
-  const isReady = depositor2 && depositor2 !== DEAD_ADDRESS;
+  const isReady = depositor2 && depositor2 !== ZERO_ADDRESS;
   const [match, setMatch] = useState<{ smartContractData?: any }>(); // Define the type of 'match' as an object with a 'smartContractData' property
   const storeKey = `${chainId}-${escrowInt}`;
-  /*
-   *
-   *
-   *  MATCH FUNCTIONS
-   *
-   *
-   */
-  async function fetchMatch() {
-    setFetching(true);
-    console.log("fetching from kv", escrowInt);
-    const _match = await getStore({ key: storeKey });
-    console.log("received from kv", escrowInt, _match, match);
-    setMatch(_match as object);
-    setFetching(false);
-  }
-  async function syncMatchData() {
-    console.log("isSyncing");
-    setSyncing(true);
-    const updatedMatchData = {
-      ...defaultMatchData,
-      ...match,
-      smartContractData: cleanSmartContractData,
-    };
-    await setStore({
-      key: storeKey,
-      data: updatedMatchData,
-    });
-    setSyncing(false);
-    console.log("updatedMatchDataFromSync", updatedMatchData);
-    // setMatch(updatedData as object);
-    setNeedsUpdate(false);
-  }
+
   const cleanSmartContractData = cleanBigIntData(smartContractData);
   const dataMatches = isEqual(cleanSmartContractData, match?.smartContractData);
 
@@ -84,6 +45,39 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
    *
    */
   useEffect(() => {
+    console.log("match", match);
+    async function fetchMatch() {
+      setFetching(true);
+      console.log("fetching from kv", escrowInt);
+      const _match = await getStore({ key: storeKey });
+      console.log("received from kv", escrowInt, _match, match);
+      setMatch(_match as object);
+      setFetching(false);
+      setNeedsUpdate(false);
+    }
+    async function syncMatchDataWithContract() {
+      console.log("isSyncing");
+      setSyncing(true);
+      const updatedMatchData = {
+        ...match,
+        smartContractData: cleanSmartContractData,
+      };
+      console.log("updatedMatchDataFromSync", updatedMatchData);
+      debugger;
+      await setStore({
+        key: storeKey,
+        data: updatedMatchData,
+      });
+      setSyncing(false);
+      console.log("updatedMatchDataFromSync", updatedMatchData);
+      setMatch(updatedMatchData as object);
+      setNeedsUpdate(false);
+    }
+    /*
+     *
+     * FETCHING LOGIC
+     *
+     */
     console.log("fetch?", !match || needsUpdate, !fetching, isReady);
     if ((!match || needsUpdate) && !fetching && isReady) {
       console.log("needs fetch");
@@ -92,9 +86,23 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
     console.log("sync?", !dataMatches, match, cleanSmartContractData, !syncing);
     if (match && !dataMatches && !syncing) {
       console.log("needs sync");
-      syncMatchData();
+      debugger;
+      syncMatchDataWithContract();
     }
-  }, [match, setMatch, chainId, escrowInt, needsUpdate, smartContractData, fetching, syncing, isReady, storeKey]);
+  }, [
+    match,
+    setMatch,
+    chainId,
+    escrowInt,
+    needsUpdate,
+    smartContractData,
+    fetching,
+    syncing,
+    isReady,
+    storeKey,
+    dataMatches,
+    cleanSmartContractData,
+  ]);
   /*
    *
    *
@@ -105,7 +113,7 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
   return (
     <div className="flex flex-col mb-2 mr-2">
       <button
-        className="btn btn-primary"
+        className="btn btn-success mb-2"
         disabled={isReady}
         onClick={async () => {
           console.log("writing to blockchain");
@@ -125,6 +133,7 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
               data: {
                 id: `${chainId}-${escrowInt}`,
                 smartContractData: sanitizedData,
+                round: 0,
                 player1: {
                   address: sanitizedData[2],
                   throws: [],
@@ -141,9 +150,10 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
           }
         }}
       >
-        {isReady ? `Match ${escrowInt} underway` : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
+        {isReady ? `Match ${escrowInt} Underway` : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
       </button>
-      <div className="flex flex-col items-center">
+
+      <div className="flex flex-col items-baseline">
         {match && (
           <Player
             storeKey={storeKey}
@@ -152,11 +162,11 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
             addressOfUser={address || ""}
             match={match}
             refreshMatch={() => {
-              console.log("refreshing from player");
               setNeedsUpdate(true);
             }}
           />
         )}
+
         {match && (
           <Player
             storeKey={storeKey}
