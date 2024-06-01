@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   }
 
   const accessToken = new AccessToken({
-    apiKey: process.env.API_KEY!,
+    apiKey: process.env.HUDDLE_API_KEY!,
     roomId: roomId as string,
     role: Role.HOST,
     permissions: {
@@ -33,5 +33,5 @@ export async function GET(request: Request) {
 
   const token = await accessToken.toJwt();
 
-  return new Response(token, { status: 200 });
+  return new Response(JSON.stringify({ token }), { status: 200, headers: { "Content-Type": "application/json" } });
 }

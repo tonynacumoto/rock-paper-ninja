@@ -2424,8 +2424,12 @@ __metadata:
     "@rainbow-me/rainbowkit": ~2.0.2
     "@tanstack/react-query": ~5.28.6
     "@trivago/prettier-plugin-sort-imports": ~4.1.1
+<<<<<<< HEAD
     "@types/cors": ^2
     "@types/express": ^4
+=======
+    "@types/lodash": ^4
+>>>>>>> upstream/main
     "@types/node": ^17.0.45
     "@types/nprogress": ^0
     "@types/react": ^18.0.21
@@ -2433,6 +2437,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ~5.40.0
     "@uniswap/sdk-core": ~4.0.1
     "@uniswap/v2-sdk": ~3.0.1
+    "@vercel/kv": ^2.0.0
     abitype: 1.0.2
     autoprefixer: ~10.4.12
     blo: ~1.0.1
@@ -2443,7 +2448,11 @@ __metadata:
     eslint-config-next: ~14.0.4
     eslint-config-prettier: ~8.5.0
     eslint-plugin-prettier: ~4.2.1
+<<<<<<< HEAD
     express: ^4.19.2
+=======
+    lodash: ^4.17.21
+>>>>>>> upstream/main
     next: ~14.0.4
     next-themes: ~0.2.1
     nprogress: ~0.2.0
@@ -3196,6 +3205,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4":
+  version: 4.17.4
+  resolution: "@types/lodash@npm:4.17.4"
+  checksum: 268e652fd52d49189f155bc89b49bd4535aa44f0b6b0ed9ce7e50318307bda58147c49539d2047f39ca37cf5b5ea38dfb801d0dbcdbc8b019c95c1afc346b05a
+  languageName: node
+  linkType: hard
+
 "@types/lru-cache@npm:^5.1.0":
   version: 5.1.1
   resolution: "@types/lru-cache@npm:5.1.1"
@@ -3777,6 +3793,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@upstash/redis@npm:^1.31.3":
+  version: 1.31.3
+  resolution: "@upstash/redis@npm:1.31.3"
+  dependencies:
+    crypto-js: ^4.2.0
+  checksum: 110117dd3864f19fa695709f48833113b30e8aa95390e4ef7a11fdc96f3bc9ef6b6792ac69474f0cb5200187f29a7711591ad51ba3067f77d52842244c396798
+  languageName: node
+  linkType: hard
+
 "@vanilla-extract/css@npm:1.14.0":
   version: 1.14.0
   resolution: "@vanilla-extract/css@npm:1.14.0"
@@ -3900,6 +3925,15 @@ __metadata:
     "@vercel/static-config": 3.0.0
     ts-morph: 12.0.0
   checksum: a13cdacfba84ff10ca2036815ea9d0e36fa5d8fe7e5af2083a8cf93a3b47d5e9c102be491d1882c08b555764804f4092cf10ba5e7d4b2495fb434bda1610f4de
+  languageName: node
+  linkType: hard
+
+"@vercel/kv@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@vercel/kv@npm:2.0.0"
+  dependencies:
+    "@upstash/redis": ^1.31.3
+  checksum: 16519f42670efce81cea64229f34aeed271e0a9a25329f5a1a0b49aa77f87e6a71a49d5c4593571c0e07f2d68a4e4288feb773cb44d0155df494de132b8eece0
   languageName: node
   linkType: hard
 

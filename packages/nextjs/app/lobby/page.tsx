@@ -1,4 +1,4 @@
-import { getAllRooms } from "../actions";
+import { getLiveMeetings } from "../actions";
 import CreateGame from "./components/CreateGame";
 import RoomCard from "./components/RoomCard";
 import type { NextPage } from "next";
@@ -10,7 +10,7 @@ type RoomInfo = {
 };
 
 const Lobby: NextPage = async () => {
-  const rooms = await getAllRooms();
+  const rooms = await getLiveMeetings();
   console.log(rooms);
   return (
     <>
@@ -23,9 +23,11 @@ const Lobby: NextPage = async () => {
             <p className="text-center text-sm">Or you can join one of the active games below</p>
           </div>
         </div>
-        {rooms.map(({ roomId }: RoomInfo) => (
-          <RoomCard key={roomId} roomId={roomId} />
-        ))}
+        <div className="grid grid-cols-3 gap-4 mt-8">
+          {rooms?.map(({ roomId }: RoomInfo) => (
+            <RoomCard key={roomId} roomId={roomId} />
+          ))}
+        </div>
       </div>
     </>
   );
