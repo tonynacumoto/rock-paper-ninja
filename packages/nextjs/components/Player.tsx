@@ -114,7 +114,6 @@ const Player = ({
   const buttonDisabled = !isPlayer;
   return (
     <div className={`flex items-center`}>
-      {/* {JSON.stringify(match[player].throws)} */}
       {!gameEnded && (
         <div className="dropdown">
           <div tabIndex={0} role="button" className={`m-1 btn ${buttonDisabled ? "btn-disabled" : ""}`}>
@@ -133,22 +132,6 @@ const Player = ({
           </ul>
         </div>
       )}
-      <div className="dropdown">
-        <div tabIndex={0} role="button" className={`m-1 btn ${buttonDisabled ? "btn-disabled" : ""}`}>
-          {text}
-        </div>
-        <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-          <li onClick={() => handleThrow({ throwValue: "r" })}>
-            <a>rock</a>
-          </li>
-          <li onClick={() => handleThrow({ throwValue: "p" })}>
-            <a>paper</a>
-          </li>
-          <li onClick={() => handleThrow({ throwValue: "s" })}>
-            <a>scissors</a>
-          </li>
-        </ul>
-      </div>
       {match[player].throws.map((throwValue: any, i: number) => {
         const moreThrowsThanCount = i >= round;
         const moreThrowsThanOpponent = myThrows.length > otherPlayer.throws.length;
