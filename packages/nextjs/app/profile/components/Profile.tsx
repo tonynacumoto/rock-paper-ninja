@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 
@@ -21,7 +22,7 @@ export default function Profile() {
       <div className="flex gap-3 items-center">
         <div className="avatar">
           <div className="w-12 rounded-full">
-            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+            <Image src="/logo.png" width={100} height={100} alt="logo" />
           </div>
         </div>
         <p className="text-md">
@@ -51,17 +52,23 @@ export default function Profile() {
       <h2 className="text-xl font-bold">Your username</h2>
       <p className="text-md">You can set your username here using ENS</p>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Type here"
-          className="input input-bordered w-full max-w-xs"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        />
-
-        <button type="submit" className="btn btn-primary">
-          Check availability
-        </button>
+        <div className="join">
+          <div>
+            <div>
+              <input
+                className="input input-bordered join-item"
+                placeholder="Search"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+              />
+            </div>
+          </div>
+          <button className="join-item bnt btn-ghost">.legt.ninja</button>
+          <div className="indicator">
+            <span className="indicator-item badge badge-secondary">new</span>
+            <button className="btn join-item">Search</button>
+          </div>
+        </div>
       </form>
     </div>
   );

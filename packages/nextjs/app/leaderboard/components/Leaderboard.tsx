@@ -66,7 +66,7 @@ export default function Leaderboard() {
                 </div>
               </div>
             </td>
-            <td>43</td>
+            <td>42</td>
             <td>Paper</td>
           </tr>
         </tbody>
