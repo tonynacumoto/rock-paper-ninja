@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Match from "../components/Match";
 import type { NextPage } from "next";
 import { parseEther } from "viem";
@@ -28,13 +27,7 @@ const Home: NextPage = () => {
             <p className="my-2 font-medium">Connected Address:</p>
             <Address address={connectedAddress} />
           </div>
-          <div className="flex justify-center items-center space-x-2 mt-2">
-            <Link href="/lobby">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Go to lobby
-              </button>
-            </Link>
-          </div>
+
           <div className="justify-center flex flex-col mt-8">
             <button
               className="btn btn-primary"
@@ -58,7 +51,7 @@ const Home: NextPage = () => {
               {allEscrowIds &&
                 allEscrowIds?.map(escrowId => {
                   return (
-                    <div key={escrowId} className="card w-96 bg-base-100 shadow-xl mb-4">
+                    <div key={escrowId} className="card card-compact w-96 bg-base-100 shadow-xl mb-4">
                       <div className="card-body">
                         <Match key={escrowId} id={escrowId} chainId={targetNetwork.id} />
                       </div>
