@@ -49,7 +49,7 @@ const Home: NextPage = () => {
             </div>
             <div className="flex justify-center max-w-lg flex-wrap flex-col-reverse">
               {allEscrowIds &&
-                allEscrowIds?.map(escrowId => {
+                allEscrowIds?.map((escrowId: any) => {
                   return (
                     <div key={escrowId} className="card card-compact w-96 bg-base-100 shadow-xl mb-4">
                       <div className="card-body">

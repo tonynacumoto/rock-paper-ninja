@@ -30,7 +30,7 @@ export default function ContractGame() {
 
         <div className="flex justify-center w-full flex-wrap flex-col-reverse mt-4">
           {allEscrowIds &&
-            allEscrowIds?.map(escrowId => {
+            allEscrowIds?.map((escrowId: any) => {
               return (
                 <div key={escrowId} className="card card-compact w-full bg-base-100 shadow-xl mb-4">
                   <div className="card-body">
