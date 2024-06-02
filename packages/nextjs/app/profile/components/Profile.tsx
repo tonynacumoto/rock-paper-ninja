@@ -1,21 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 
+// import ENS from "~~/components/ENS";
+
 export default function Profile() {
-  const [username, setUsername] = useState("");
   const { isConnected } = useAccount();
   if (!isConnected) {
     return <div>Connect wallet in the header</div>;
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    console.log(username);
-  }
   return (
     <div className="w-full flex flex-col gap-4">
       <h1 className="text-2xl font-bold">Profile</h1>
@@ -49,27 +45,7 @@ export default function Profile() {
           <div className="stat-desc text-error">↘︎ 90 (14%)</div>
         </div>
       </div>
-      <h2 className="text-xl font-bold">Your username</h2>
-      <p className="text-md">You can set your username here using ENS</p>
-      <form onSubmit={handleSubmit}>
-        <div className="join">
-          <div>
-            <div>
-              <input
-                className="input input-bordered join-item"
-                placeholder="Search"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-              />
-            </div>
-          </div>
-          <button className="join-item bnt btn-ghost">.legt.ninja</button>
-          <div className="indicator">
-            <span className="indicator-item badge badge-secondary">new</span>
-            <button className="btn join-item">Search</button>
-          </div>
-        </div>
-      </form>
+      {/* <ENS /> */}
     </div>
   );
 }
