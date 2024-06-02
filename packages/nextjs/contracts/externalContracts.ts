@@ -1,3 +1,5 @@
+import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
+
 const externalContracts = {
   31337: {
     ensRegistry: {
@@ -424,4 +426,4 @@ const externalContracts = {
   },
 } as const;
 
-export default externalContracts;
+export default externalContracts satisfies GenericContractsDeclaration;
