@@ -40,13 +40,9 @@ function ChatBox() {
         <div className=" min-h-48 mb-4 flex flex-col gap-2 max-h-96 overflow-y-scroll">
           {messages.map((message, index) =>
             message.sender === peerId ? (
-              <div className="w-full self-end" key={index}>
-                <LocalMessageBubble message={message} />
-              </div>
+              <LocalMessageBubble key={index} message={message} />
             ) : (
-              <div className="w-full self-start" key={index}>
-                <RemoteMessageBubble key={index} message={message} />
-              </div>
+              <RemoteMessageBubble key={index} message={message} />
             ),
           )}
         </div>

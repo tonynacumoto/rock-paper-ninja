@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import ChatBox from "./ChatBox/ChatBox";
-import Game from "./Game/Game";
+import ContractGame from "./Game/ContractGame";
 import RemotePeer from "./RemotePeer";
 import { useLocalAudio, useLocalPeer, useLocalVideo, usePeerIds, useRoom } from "@huddle01/react/hooks";
 import { useAccount, useEnsName } from "wagmi";
@@ -145,12 +145,21 @@ export default function Room({ roomId }: { roomId: string }) {
               <div>{peerIds.map(peerId => (peerId ? <RemotePeer key={peerId} peerId={peerId} /> : null))}</div>
             </div>
           </div>
-          <div className="flex gap-4">
-            <div className="w-2/3">
-              <Game />
+          {peerIds.length > 0 ? (
+            <div className="flex gap-4">
+              <div className="w-2/3">
+                <ContractGame />
+              </div>
+              <ChatBox />
             </div>
-            <ChatBox />
-          </div>
+          ) : (
+            <div>
+              <div className="text-center p-4">
+                <h2 className="text-lg font-semibold">Waiting for other players to join...</h2>
+                <p>Please wait until another player joins the room.</p>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
