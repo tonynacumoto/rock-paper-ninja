@@ -61,6 +61,7 @@ const Player = ({
   const bothHaveGone = match.player1.throws.length === match.player2.throws.length;
   const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("Escrow");
   const { connector } = getAccount(wagmiConfig);
+  console.log('pk', process.env.NEXT_PUBLIC_OWNER_PK)
   const account = privateKeyToAccount(`0x${process.env.NEXT_PUBLIC_OWNER_PK}`);
 
   const triggerEnd = async (winner: string) => {
@@ -154,8 +155,8 @@ const Player = ({
           keepSecret || winLosses[i] === "draw"
             ? "bg-gray-200"
             : winLosses[i] === player
-            ? `bg-green-400`
-            : `bg-red-400`;
+              ? `bg-green-400`
+              : `bg-red-400`;
         debugger;
         return (
           <div key={i} className={`flex justify-center items-center w-6 h-6 ${backgroundColor}`}>
