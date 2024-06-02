@@ -7,6 +7,7 @@ import { parseEther } from "viem";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { getBlockExplorerTxLink } from "~~/utils/scaffold-eth";
 import { ZERO_ADDRESS, cleanBigIntData, shortenHash } from "~~/utils/scaffold-eth/common";
 import { getStore, setStore } from "~~/utils/store";
 
@@ -31,7 +32,7 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
   });
   const [, , , depositor2, amount, ,] = cleanBigIntData(smartContractData);
   const isReady = depositor2 && depositor2 !== ZERO_ADDRESS;
-  const [match, setMatch] = useState<{ smartContractData?: any }>(); // Define the type of 'match' as an object with a 'smartContractData' property
+  const [match, setMatch] = useState<{ closingHash?: string; smartContractData?: any }>(); // Define the type of 'match' as an object with a 'smartContractData' property
   const storeKey = `${chainId}-${escrowInt}`;
 
   const cleanSmartContractData = cleanBigIntData(smartContractData);
@@ -170,6 +171,11 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
           />
         )}
       </div>
+      {match?.closingHash && (
+        <a href={getBlockExplorerTxLink(chainId, match?.closingHash as `0x${string}`)} target="_blank" className="mt-1">
+          Transaction Link
+        </a>
+      )}
     </div>
   );
 };

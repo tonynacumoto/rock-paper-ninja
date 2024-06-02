@@ -1,9 +1,7 @@
 "use client";
 
 import { privateKeyToAccount } from "viem/accounts";
-import { useChainId } from "wagmi";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { getBlockExplorerTxLink } from "~~/utils/scaffold-eth";
 import { cleanBigIntData } from "~~/utils/scaffold-eth/common";
 import { setStore } from "~~/utils/store";
 
@@ -40,7 +38,6 @@ const Player = ({
   const isPlayer = match[player].address === addressOfUser;
   const otherPlayer = player === "player1" ? match.player2 : match.player1;
   const myThrows = match[player].throws;
-  const chainId = useChainId();
   const [, , , , , isEnded] = cleanBigIntData(match.smartContractData);
 
   const winLosses = winLossRecord({ throws1: match.player1.throws, throws2: match.player2.throws });
@@ -147,11 +144,6 @@ const Player = ({
           );
         })}
       </div>
-      {match.closingHash && (
-        <a href={getBlockExplorerTxLink(chainId, match.closingHash as `0x${string}`)} target="_blank">
-          Transaction Link
-        </a>
-      )}
     </div>
   );
 };
