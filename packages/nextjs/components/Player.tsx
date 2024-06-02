@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { privateKeyToAccount } from "viem/accounts";
 import { useChainId } from "wagmi";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { getBlockExplorerTxLink } from "~~/utils/scaffold-eth";
+import { cleanBigIntData } from "~~/utils/scaffold-eth/common";
 import { setStore } from "~~/utils/store";
 
 const determineWinner = (throw1: string, throw2: string) => {
@@ -41,15 +41,13 @@ const Player = ({
   const otherPlayer = player === "player1" ? match.player2 : match.player1;
   const myThrows = match[player].throws;
   const chainId = useChainId();
-  const [gameEnded, setGameEnded] = useState(false);
-  const [transactionLink, setTransactionLink] = useState<string | null>(null);
+  const [, , , , , isEnded] = cleanBigIntData(match.smartContractData);
 
   const winLosses = winLossRecord({ throws1: match.player1.throws, throws2: match.player2.throws });
   const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("Escrow");
   const account = privateKeyToAccount(`0x${process.env.NEXT_PUBLIC_OWNER_PK}`);
 
   const triggerEnd = async (winner: string) => {
-    console.log("winner", winner);
     const winnerAddress = match[winner].address;
     try {
       const writeResponse = await writeEscrowAsync({
@@ -57,53 +55,46 @@ const Player = ({
         args: [match.smartContractData[0], winnerAddress, JSON.stringify(match)],
         account,
       });
-
-      const link = getBlockExplorerTxLink(chainId, writeResponse as `0x${string}`);
-
-      if (winner === addressOfUser) {
-        // show modal
-        setTransactionLink(link);
-      } else {
-        setTransactionLink(link);
-      }
-      setGameEnded(true);
-      console.log("writeResponse", writeResponse);
+      return writeResponse;
     } catch (error) {
       console.log("error releasing", error);
     }
   };
-  // console.log("already", alreadyThrown, match.round, match[player].throws.length);
-  const handleThrow = ({ throwValue }: { throwValue: any }) => {
+  const handleThrow = async ({ throwValue }: { throwValue: any }) => {
     console.log("throw", throwValue);
-    const mutablePlayer = { ...match[player] };
     const updatedData = {
       ...match,
       [player]: {
-        ...mutablePlayer,
-        throws: [...mutablePlayer.throws, throwValue],
+        ...match[player],
+        throws: [...match[player].throws, throwValue],
       },
     };
     const _bothHaveGone = updatedData[player].throws.length <= otherPlayer.throws.length;
     if (_bothHaveGone) {
       updatedData.round++;
-      const player1WinCount = winLosses.filter((winner: string) => winner === "player1").length;
-      const player2WinCount = winLosses.filter((winner: string) => winner === "player2").length;
+      const _winLosses = winLossRecord({ throws1: updatedData.player1.throws, throws2: updatedData.player2.throws });
+      const player1WinCount = _winLosses.filter((winner: string) => winner === "player1").length;
+      const player2WinCount = _winLosses.filter((winner: string) => winner === "player2").length;
       console.log(
         "round",
         round,
         "ratio",
-        winLosses,
+        _winLosses,
         "player1WinCount",
         player1WinCount,
         "player2WinCount",
         player2WinCount,
       );
+      let closingHash;
       if (player1WinCount === match.firstTo) {
-        triggerEnd("player1");
+        closingHash = await triggerEnd("player1");
+        updatedData.winner = "player1";
       }
       if (player2WinCount === match.firstTo) {
-        triggerEnd("player2");
+        closingHash = await triggerEnd("player2");
+        updatedData.winner = "player2";
       }
+      updatedData.closingHash = closingHash;
     }
     setStore({
       key: storeKey,
@@ -113,43 +104,51 @@ const Player = ({
   };
   const buttonDisabled = !isPlayer;
   return (
-    <div className={`flex items-center`}>
-      {!gameEnded && (
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className={`m-1 btn ${buttonDisabled ? "btn-disabled" : ""}`}>
-            {text}
+    <div className={`flex items-center w-full space-y-1`}>
+      <div className="w-40">
+        {isEnded ? (
+          <div>
+            {text} {player === match.winner ? "won" : "lost"}
           </div>
-          <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-            <li onClick={() => handleThrow({ throwValue: "r" })}>
-              <a>rock</a>
-            </li>
-            <li onClick={() => handleThrow({ throwValue: "p" })}>
-              <a>paper</a>
-            </li>
-            <li onClick={() => handleThrow({ throwValue: "s" })}>
-              <a>scissors</a>
-            </li>
-          </ul>
-        </div>
-      )}
-      {match[player].throws.map((throwValue: any, i: number) => {
-        const moreThrowsThanCount = i >= round;
-        const moreThrowsThanOpponent = myThrows.length > otherPlayer.throws.length;
-        const keepSecret = moreThrowsThanCount && moreThrowsThanOpponent;
-        const backgroundColor =
-          keepSecret || winLosses[i] === "draw"
-            ? "bg-gray-200"
-            : winLosses[i] === player
-            ? `bg-green-400`
-            : `bg-red-400`;
-        return (
-          <div key={i} className={`flex justify-center items-center w-6 h-6 ${backgroundColor}`}>
-            {keepSecret ? "?" : throwValue}
+        ) : (
+          <div className="dropdown">
+            <div tabIndex={0} role="button" className={`m-1 btn ${buttonDisabled ? "btn-disabled" : ""}`}>
+              {text}
+            </div>
+            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+              <li onClick={() => handleThrow({ throwValue: "r" })}>
+                <a>rock</a>
+              </li>
+              <li onClick={() => handleThrow({ throwValue: "p" })}>
+                <a>paper</a>
+              </li>
+              <li onClick={() => handleThrow({ throwValue: "s" })}>
+                <a>scissors</a>
+              </li>
+            </ul>
           </div>
-        );
-      })}
-      {transactionLink && (
-        <a href={transactionLink} target="_blank">
+        )}
+      </div>
+      <div className="space-x-1 flex-row flex">
+        {match[player].throws.map((throwValue: any, i: number) => {
+          const moreThrowsThanCount = i >= round;
+          const moreThrowsThanOpponent = myThrows.length > otherPlayer.throws.length;
+          const keepSecret = moreThrowsThanCount && moreThrowsThanOpponent;
+          const backgroundColor =
+            keepSecret || winLosses[i] === "draw"
+              ? "bg-gray-200"
+              : winLosses[i] === player
+              ? `bg-green-400`
+              : `bg-red-400`;
+          return (
+            <div key={i} className={`flex justify-center items-center w-6 h-6 ${backgroundColor}`}>
+              {keepSecret ? "?" : throwValue}
+            </div>
+          );
+        })}
+      </div>
+      {match.closingHash && (
+        <a href={getBlockExplorerTxLink(chainId, match.closingHash as `0x${string}`)} target="_blank">
           Transaction Link
         </a>
       )}

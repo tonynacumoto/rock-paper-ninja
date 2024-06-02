@@ -45,7 +45,7 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
    *
    */
   useEffect(() => {
-    console.log("match", match);
+    // console.log("match", match);
     async function fetchMatch() {
       setFetching(true);
       const _match = await getStore({ key: storeKey });
