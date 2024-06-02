@@ -108,12 +108,11 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
         onClick={async () => {
           console.log("writing to blockchain");
           try {
-            const writeResponse = await writeEscrowAsync({
+            await writeEscrowAsync({
               functionName: "joinEscrow",
               args: [id as bigint],
               value: parseEther("0.1"),
             });
-            console.log("block writeRes", writeResponse, escrowInt, chainId);
 
             const sanitizedData = cleanBigIntData(smartContractData);
             sanitizedData[3] = address;
@@ -140,7 +139,9 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
           }
         }}
       >
-        {isReady ? `Match ${escrowInt} Underway` : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
+        {isReady
+          ? `Match ${escrowInt} ${match?.closingHash ? "Closed" : "Underway"}`
+          : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
       </button>
 
       <div className="flex flex-col items-baseline">
