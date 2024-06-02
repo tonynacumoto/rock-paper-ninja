@@ -16,7 +16,7 @@ const nextConfig = {
   },
   trailingSlash: true,
   images: {
-    domains: ['localhost'],
+    domains: ["localhost", "gateway.lighthouse.storage"],
   },
 };
 

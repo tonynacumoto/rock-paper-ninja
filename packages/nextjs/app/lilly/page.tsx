@@ -53,9 +53,10 @@ const LillyPage: React.FC = () => {
 
   const scMintNFT = async (ipfsCid: string) => {
     // Create the metadata for the NFT
+    console.log("ipfsCid", ipfsCid);
     const metadata = {
       description: "Lilypad Image NFT",
-      image: "Visit at https://gateway.lighthouse.storage/ipfs/" + ipfsCid,
+      image: `https://gateway.lighthouse.storage/ipfs/${ipfsCid}`,
       name: imageName,
       attributes: [], // Add any attributes you want here
     };
@@ -95,7 +96,7 @@ const LillyPage: React.FC = () => {
       const output = await lighthouse.upload(file, apiKey, false, null, progressCallback);
       console.log("File Status:", output);
       console.log("Visit at https://gateway.lighthouse.storage/ipfs/" + output.data.Hash);
-      const jsonIpfsCid = JSON.stringify(output.data.Hash);
+      const jsonIpfsCid = output.data.Hash;
       setIpfsCid(jsonIpfsCid);
     } catch (error) {
       console.error("Error uploading file:", error);

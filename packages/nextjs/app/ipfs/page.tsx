@@ -19,11 +19,11 @@ const IpfsPage: React.FC = () => {
     const response = await fetch(url);
     const data = await response.blob();
     const file = new File([data], "filename", { type: data.type });
-  
+
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(file);
     const fileList = dataTransfer.files;
-  
+
     return fileList;
   };
 
@@ -34,6 +34,7 @@ const IpfsPage: React.FC = () => {
       const output = await lighthouse.upload(file, apiKey, false, null, progressCallback);
       console.log("File Status:", output);
       console.log("Visit at https://gateway.lighthouse.storage/ipfs/" + output.data.Hash);
+      setCid(output.data.Hash);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -82,21 +83,22 @@ const IpfsPage: React.FC = () => {
   return (
     <main>
       <div className="text-center mt-8 bg-secondary p-10">
-        <h1 className="text-4xl my-0">IPFS Integration</h1>
-        <p className="text-neutral">
-          Store and retrieve data from IPFS filecoin.
-          <br /> Check{" "}
-          <code className="italic bg-base-300 text-base font-bold [word-spacing:-0.5rem] px-1">
-            packages / nextjs / app / ipfs / page.tsx
-          </code>{" "}
-        </p>
-        <form onSubmit={handleUrlSubmit}>
-          <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder="Enter URL" />
-          <button type="submit">Upload from URL</button>
+        <h1 className="text-4xl my-0">Upload a file to IPFS</h1>
+        <form onSubmit={handleUrlSubmit} className="mb-4">
+          <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder="Enter URL" className="px-4 py-2 mt-5 border rounded" />
+          <button type="submit" className="px-4 py-2 m-2 bg-blue-500 text-white rounded mt-5 hover:bg-blue-700">Upload from URL</button>
         </form>
-        <input onChange={e => uploadFile(e.target.files)} type="file" />
+        <input onChange={e => uploadFile(e.target.files)} type="file" className="px-4 py-2 border rounded" />
+        {response && (
+          <div className="mt-4">
+            File successfully uploaded, please see your file by following this link:{" "}
+            <a href={`https://gateway.lighthouse.storage/ipfs/${cid}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+              https://gateway.lighthouse.storage/ipfs/{cid}
+            </a>
+          </div>
+        )}
       </div>
-    </main>
+    </main >
   );
 };
 
