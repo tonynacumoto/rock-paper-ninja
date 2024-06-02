@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDataMessage, useLocalPeer } from "@huddle01/react/hooks";
+import { useAccount } from "wagmi";
 
 const MOVE_OPTIONS = ["rock", "paper", "scissors"];
 
@@ -12,7 +13,7 @@ export type TMove = {
 function Game() {
   const [moves, setMoves] = useState<TMove[]>([]);
   const [gameId, setGameId] = useState(0);
-
+  const { address } = useAccount();
   const { peerId } = useLocalPeer();
   const [moveMade, setMoveMade] = useState(false);
   const [gameResult, setGameResult] = useState("");
@@ -61,9 +62,13 @@ function Game() {
     }
 
     setMoveMade(true);
+    const moveData = {
+      address,
+      move,
+    };
     sendData({
       to: "*",
-      payload: move,
+      payload: JSON.stringify(moveData),
       label: "move",
     });
   };
@@ -78,7 +83,9 @@ function Game() {
       setGameId(gameId + 1);
       setMoves([]);
     }
-  }, [moves]);
+  }, [determineWinner, gameId, getMoves, moves]);
+
+  console.log(moves);
 
   const currentGameMoves = getMoves(gameId);
   const youMadeMove = currentGameMoves.find(move => move.sender === peerId);

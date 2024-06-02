@@ -1,17 +1,16 @@
-import { getLiveMeetings } from "../actions";
+"use client";
+
 import CreateGame from "./components/CreateGame";
 import RoomCard from "./components/RoomCard";
 import type { NextPage } from "next";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
-export const revalidate = 0;
+const Lobby: NextPage = () => {
+  const { data: allEscrowIds } = useScaffoldReadContract({
+    contractName: "Escrow",
+    functionName: "getAllEscrows",
+  });
 
-type RoomInfo = {
-  roomId: string;
-};
-
-const Lobby: NextPage = async () => {
-  const rooms = await getLiveMeetings();
-  console.log(rooms);
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
@@ -24,8 +23,8 @@ const Lobby: NextPage = async () => {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4 mt-8 p-4">
-          {rooms?.map(({ roomId }: RoomInfo) => (
-            <RoomCard key={roomId} roomId={roomId} />
+          {allEscrowIds?.map((escrowId: bigint) => (
+            <RoomCard key={escrowId} escrowId={escrowId} />
           ))}
         </div>
       </div>
