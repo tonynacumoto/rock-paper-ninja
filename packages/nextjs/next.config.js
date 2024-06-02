@@ -15,6 +15,9 @@ const nextConfig = {
     return config;
   },
   trailingSlash: true,
+  images: {
+    domains: ["localhost", "gateway.lighthouse.storage"],
+  },
 };
 
 module.exports = nextConfig;
