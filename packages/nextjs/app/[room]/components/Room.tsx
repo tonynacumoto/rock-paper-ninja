@@ -8,7 +8,8 @@ import RemotePeer from "./RemotePeer";
 import { useLocalAudio, useLocalPeer, useLocalVideo, usePeerIds, useRoom } from "@huddle01/react/hooks";
 import { useAccount, useEnsName } from "wagmi";
 
-export default function Room({ roomId }: { roomId: string }) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function Room({ roomId, escrowId = 0 }: { roomId: string; escrowId?: number }) {
   const { address, isConnected } = useAccount();
   const videoRef = useRef<HTMLVideoElement>(null);
   const { data: ensName } = useEnsName({ address });
@@ -145,12 +146,18 @@ export default function Room({ roomId }: { roomId: string }) {
               <div>{peerIds.map(peerId => (peerId ? <RemotePeer key={peerId} peerId={peerId} /> : null))}</div>
             </div>
           </div>
-          <div className="flex gap-4">
-            <div className="w-2/3">
-              <Game />
+          {peerIds.length > 0 ? (
+            <div className="flex gap-4">
+              <div className="w-2/3">
+                <Game />
+              </div>
+              <ChatBox />
             </div>
-            <ChatBox />
-          </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <p>Waiting for other players to join...</p>
+            </div>
+          )}
         </div>
       )}
     </div>
