@@ -23,7 +23,7 @@ const EnsSubdomainManager = () => {
   };
 
   const addSubdomain = async () => {
-    const domainHash = namehash(domain);
+    const domainHash = namehash(domain) as `0x${string}`;
     const subdomainLabelHash = keccak256(new TextEncoder().encode(subdomain));
 
     try {

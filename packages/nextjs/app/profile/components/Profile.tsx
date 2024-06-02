@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useAccount } from "wagmi";
+import EnsSubdomainManager from "~~/components/ENS";
 
 // import ENS from "~~/components/ENS";
 
@@ -45,7 +46,7 @@ export default function Profile() {
           <div className="stat-desc text-error">↘︎ 90 (14%)</div>
         </div>
       </div>
-      {/* <ENS /> */}
+      <EnsSubdomainManager />
     </div>
   );
 }
