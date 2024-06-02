@@ -1,4 +1,16 @@
-# 🏗 Scaffold-ETH 2
+# 🪨Rock 📜Paper 🥷Ninja (ETHGlobal HackFS 2024)
+
+This project was built for the ETHGlobal HackFS 2024. Here is the breakdown of what we did:
+
+Rock Paper Ninja is a web3 take on the classic game of Rock Paper Scissors. The game is played in rounds. Both players deposit their bet and the contract awards the winnings to the player with the winning hand combination automatically. The game also takes a very small percentage.
+
+- ScaffoldETH is used for both Hardhat contract development and the NextJS application
+- Huddle01 is used for each room of the game.
+  - Live chat
+  - Live video + audio
+- Lilypad is used for generative AI of player avatars
+- ENS is used for the player's username on a subdomain of legt.ninja (WIP)
+- IPFS is used for storing avatars as well as all game moves (2nd part WIP)
 
 <h4 align="center">
   <a href="https://docs.scaffoldeth.io">Documentation</a> |
