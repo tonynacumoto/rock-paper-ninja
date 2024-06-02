@@ -1,6 +1,6 @@
-/* eslint-disable prettier/prettier */
 "use client";
 
+import { useState } from "react";
 import { getAccount } from "@wagmi/core";
 import { privateKeyToAccount } from "viem/accounts";
 import { useChainId } from "wagmi";
@@ -8,20 +8,6 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { getBlockExplorerTxLink } from "~~/utils/scaffold-eth";
 import { setStore } from "~~/utils/store";
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
 
 const determineWinner = (throw1: string, throw2: string) => {
   console.log(throw1, throw2);
@@ -59,13 +45,15 @@ const Player = ({
   const otherPlayer = player === "player1" ? match.player2 : match.player1;
   const myThrows = match[player].throws;
   const chainId = useChainId();
+  const [gameEnded, setGameEnded] = useState(false);
+  const [transactionLink, setTransactionLink] = useState<string | null>(null);
 
   const alreadyThrown = round < myThrows.length;
   const winLosses = winLossRecord({ throws1: match.player1.throws, throws2: match.player2.throws });
   const bothHaveGone = match.player1.throws.length === match.player2.throws.length;
   const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("Escrow");
   const { connector } = getAccount(wagmiConfig);
-  console.log('pk', process.env.NEXT_PUBLIC_OWNER_PK)
+  console.log("pk", process.env.NEXT_PUBLIC_OWNER_PK);
   const account = privateKeyToAccount(`0x${process.env.NEXT_PUBLIC_OWNER_PK}`);
 
   const triggerEnd = async (winner: string) => {
@@ -79,12 +67,13 @@ const Player = ({
         account,
       });
       const link = getBlockExplorerTxLink(chainId, winnerAddress);
-      if (winner === addressOfUser) {
+      if (winnerAddress === addressOfUser) {
         // show modal
-        console.log("you won", link);
+        setTransactionLink(link);
       } else {
-        console.log("you lost", link);
+        setTransactionLink(link);
       }
+      setGameEnded(true);
       console.log("writeResponse", writeResponse);
     } catch (error) {
       console.log("error releasing", error);
@@ -135,22 +124,24 @@ const Player = ({
   return (
     <div className={`flex items-center`}>
       {/* {JSON.stringify(match[player].throws)} */}
-      <div className="dropdown">
-        <div tabIndex={0} role="button" className={`m-1 btn ${buttonDisabled ? "btn-disabled" : ""}`}>
-          {text}
+      {!gameEnded && (
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className={`m-1 btn ${buttonDisabled ? "btn-disabled" : ""}`}>
+            {text}
+          </div>
+          <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+            <li onClick={() => handleThrow({ throwValue: "r" })}>
+              <a>rock</a>
+            </li>
+            <li onClick={() => handleThrow({ throwValue: "p" })}>
+              <a>paper</a>
+            </li>
+            <li onClick={() => handleThrow({ throwValue: "s" })}>
+              <a>scissors</a>
+            </li>
+          </ul>
         </div>
-        <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-          <li onClick={() => handleThrow({ throwValue: "r" })}>
-            <a>rock</a>
-          </li>
-          <li onClick={() => handleThrow({ throwValue: "p" })}>
-            <a>paper</a>
-          </li>
-          <li onClick={() => handleThrow({ throwValue: "s" })}>
-            <a>scissors</a>
-          </li>
-        </ul>
-      </div>
+      )}
       {match[player].throws.map((throwValue: any, i: number) => {
         const moreThrowsThanCount = i >= round;
         const moreThrowsThanOpponent = myThrows.length > otherPlayer.throws.length;
@@ -160,8 +151,8 @@ const Player = ({
           keepSecret || winLosses[i] === "draw"
             ? "bg-gray-200"
             : winLosses[i] === player
-              ? `bg-green-400`
-              : `bg-red-400`;
+            ? `bg-green-400`
+            : `bg-red-400`;
         debugger;
         return (
           <div key={i} className={`flex justify-center items-center w-6 h-6 ${backgroundColor}`}>
@@ -169,7 +160,11 @@ const Player = ({
           </div>
         );
       })}
-      {/* <button onClick={() => triggerEnd('player1')}>trigger end</button> */}
+      {transactionLink && (
+        <a href={transactionLink} target="_blank">
+          Transaction Link
+        </a>
+      )}
     </div>
   );
 };
