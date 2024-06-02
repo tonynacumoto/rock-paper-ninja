@@ -1,32 +1,14 @@
 /* eslint-disable prettier/prettier */
 "use client";
 
-import { getAccount } from "@wagmi/core";
 import { privateKeyToAccount } from "viem/accounts";
 import { useChainId } from "wagmi";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { getBlockExplorerTxLink } from "~~/utils/scaffold-eth";
 import { setStore } from "~~/utils/store";
 
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
-/* eslint-disable prettier/prettier */
-
 const determineWinner = (throw1: string, throw2: string) => {
-  console.log(throw1, throw2);
   if (throw1 === throw2) {
-    console.log("is draw");
     return "draw";
   }
 
@@ -60,39 +42,34 @@ const Player = ({
   const myThrows = match[player].throws;
   const chainId = useChainId();
 
-  const alreadyThrown = round < myThrows.length;
   const winLosses = winLossRecord({ throws1: match.player1.throws, throws2: match.player2.throws });
-  const bothHaveGone = match.player1.throws.length === match.player2.throws.length;
   const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("Escrow");
-  const { connector } = getAccount(wagmiConfig);
-  console.log('pk', process.env.NEXT_PUBLIC_OWNER_PK)
   const account = privateKeyToAccount(`0x${process.env.NEXT_PUBLIC_OWNER_PK}`);
 
   const triggerEnd = async (winner: string) => {
+    console.log('winner', winner)
     const winnerAddress = match[winner].address;
     try {
-      console.log("account", account, connector);
-      debugger;
       const writeResponse = await writeEscrowAsync({
         functionName: "releaseFunds",
         args: [match.smartContractData[0], winnerAddress, JSON.stringify(match)],
         account,
       });
-      const link = getBlockExplorerTxLink(chainId, winnerAddress);
+      const link = getBlockExplorerTxLink(chainId, writeResponse as `0x${string}`);
+      console.log('link', link)
       if (winner === addressOfUser) {
         // show modal
-        console.log("you won", link);
+        window.alert(`you won, tx:${link}`,);
       } else {
-        console.log("you lost", link);
+        window.alert(`you lost, tx:${link}`,);
       }
-      console.log("writeResponse", writeResponse);
     } catch (error) {
       console.log("error releasing", error);
     }
   };
   // console.log("already", alreadyThrown, match.round, match[player].throws.length);
   const handleThrow = ({ throwValue }: { throwValue: any }) => {
-    debugger;
+    console.log('throw', throwValue)
     const mutablePlayer = { ...match[player] };
     const updatedData = {
       ...match,
@@ -103,22 +80,19 @@ const Player = ({
     };
     const _bothHaveGone = updatedData[player].throws.length <= otherPlayer.throws.length;
     if (_bothHaveGone) {
-      debugger;
       updatedData.round++;
       const player1WinCount = winLosses.filter((winner: string) => winner === "player1").length;
       const player2WinCount = winLosses.filter((winner: string) => winner === "player2").length;
       console.log(
-        "player1WinCount",
-        player1WinCount,
-        "player2WinCount",
-        player2WinCount,
-        "match.firstTo",
-        match.firstTo,
+        "round", round,
+        "ratio", winLosses,
+        "player1WinCount", player1WinCount,
+        "player2WinCount", player2WinCount,
       );
-      if (player1WinCount >= match.firstTo) {
+      if (player1WinCount === match.firstTo) {
         triggerEnd("player1");
       }
-      if (player2WinCount >= match.firstTo) {
+      if (player2WinCount === match.firstTo) {
         triggerEnd("player2");
       }
     }
@@ -128,13 +102,9 @@ const Player = ({
     });
     refreshMatch();
   };
-  console.log("player", !isPlayer, alreadyThrown, bothHaveGone);
-  // const buttonDisabled = !isPlayer || (alreadyThrown && !bothHaveGone)
   const buttonDisabled = !isPlayer;
-  debugger;
   return (
     <div className={`flex items-center`}>
-      {/* {JSON.stringify(match[player].throws)} */}
       <div className="dropdown">
         <div tabIndex={0} role="button" className={`m-1 btn ${buttonDisabled ? "btn-disabled" : ""}`}>
           {text}
@@ -155,14 +125,12 @@ const Player = ({
         const moreThrowsThanCount = i >= round;
         const moreThrowsThanOpponent = myThrows.length > otherPlayer.throws.length;
         const keepSecret = moreThrowsThanCount && moreThrowsThanOpponent;
-        console.log("moreThrowsThanCount", moreThrowsThanCount, "moreThrowsThanOpponent", moreThrowsThanOpponent);
         const backgroundColor =
           keepSecret || winLosses[i] === "draw"
             ? "bg-gray-200"
             : winLosses[i] === player
               ? `bg-green-400`
               : `bg-red-400`;
-        debugger;
         return (
           <div key={i} className={`flex justify-center items-center w-6 h-6 ${backgroundColor}`}>
             {keepSecret ? "?" : throwValue}

@@ -48,28 +48,22 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
     console.log("match", match);
     async function fetchMatch() {
       setFetching(true);
-      console.log("fetching from kv", escrowInt);
       const _match = await getStore({ key: storeKey });
-      console.log("received from kv", escrowInt, _match, match);
       setMatch(_match as object);
       setFetching(false);
       setNeedsUpdate(false);
     }
     async function syncMatchDataWithContract() {
-      console.log("isSyncing");
       setSyncing(true);
       const updatedMatchData = {
         ...match,
         smartContractData: cleanSmartContractData,
       };
-      console.log("updatedMatchDataFromSync", updatedMatchData);
-      debugger;
       await setStore({
         key: storeKey,
         data: updatedMatchData,
       });
       setSyncing(false);
-      console.log("updatedMatchDataFromSync", updatedMatchData);
       setMatch(updatedMatchData as object);
       setNeedsUpdate(false);
     }
@@ -78,15 +72,10 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
      * FETCHING LOGIC
      *
      */
-    console.log("fetch?", !match || needsUpdate, !fetching, isReady);
     if ((!match || needsUpdate) && !fetching && isReady) {
-      console.log("needs fetch");
       fetchMatch();
     }
-    console.log("sync?", !dataMatches, match, cleanSmartContractData, !syncing);
     if (match && !dataMatches && !syncing) {
-      console.log("needs sync");
-      debugger;
       syncMatchDataWithContract();
     }
   }, [
@@ -127,7 +116,6 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
 
             const sanitizedData = cleanBigIntData(smartContractData);
             sanitizedData[3] = address;
-            console.log("saving data", sanitizedData);
             await setStore({
               key: storeKey,
               data: {
