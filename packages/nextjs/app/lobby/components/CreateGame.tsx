@@ -10,7 +10,7 @@ export default function CreateGame() {
     router.push(`/${huddleRoomId}`);
   };
   return (
-    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={createGame}>
+    <button className="btn btn-primary my-4" onClick={createGame}>
       Create game
     </button>
   );

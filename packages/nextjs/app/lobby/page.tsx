@@ -23,7 +23,7 @@ const Lobby: NextPage = async () => {
             <p className="text-center text-sm">Or you can join one of the active games below</p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4 mt-8">
+        <div className="grid grid-cols-3 gap-4 mt-8 p-4">
           {rooms?.map(({ roomId }: RoomInfo) => (
             <RoomCard key={roomId} roomId={roomId} />
           ))}

@@ -1,7 +1,25 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AccessToken, Role } from "@huddle01/server-sdk/auth";
 
 export const dynamic = "force-dynamic";
+
+const getCorsHeaders = (origin: string) => {
+  const headers = {
+    "Access-Control-Allow-Methods": `${process.env.ALLOWED_METHODS}`,
+    "Access-Control-Allow-Headers": `${process.env.ALLOWED_HEADERS}`,
+    "Access-Control-Allow-Origin": `${process.env.DOMAIN_URL}`,
+  };
+
+  if (!process.env.ALLOWED_ORIGIN || !origin) return headers;
+
+  const allowedOrigins = process.env.ALLOWED_ORIGIN.split(",");
+
+  if (allowedOrigins.includes("*")) {
+    headers["Access-Control-Allow-Origin"] = "*";
+  } else if (allowedOrigins.includes(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+  return headers;
+};
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -13,7 +31,7 @@ export async function GET(request: Request) {
   }
 
   const accessToken = new AccessToken({
-    apiKey: process.env.HUDDLE_API_KEY!,
+    apiKey: process.env.HUDDLE_API_KEY as string,
     roomId: roomId as string,
     role: Role.HOST,
     permissions: {
@@ -33,5 +51,8 @@ export async function GET(request: Request) {
 
   const token = await accessToken.toJwt();
 
-  return new Response(JSON.stringify({ token }), { status: 200, headers: { "Content-Type": "application/json" } });
+  return new Response(token, {
+    status: 200,
+    headers: getCorsHeaders(request.headers.get("origin") || ""),
+  });
 }

@@ -1,34 +1,21 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { getParticipantsList } from "~~/app/actions";
 
 export default function RoomCard({ roomId }: { roomId: string }) {
-  const [loading, setLoading] = useState(false);
-  const [activePeers, setActivePeers] = useState<any[]>([]);
-  useEffect(() => {
-    async function getParticipants() {
-      setLoading(true);
-      const data = await getParticipantsList(roomId);
-      console.log(data);
-      if (data) {
-        setActivePeers(data?.participants);
-      }
-      setLoading(false);
-    }
-    getParticipants();
-  }, [roomId]);
   return (
     <Link href={`/${roomId}`}>
-      {loading ? (
-        <div className="rounded-md bg-gray-100 p-4 text-blue-500 text-center">Loading...</div>
-      ) : (
-        <div className="rounded-md bg-gray-100 p-4 text-blue-500 text-center">
-          <p>RoomId: {roomId}</p>
-          <p>Active peers: {activePeers.length}</p>
+      <div className="card card-compact w-96 bg-base-100 shadow-xl">
+        <figure>
+          <Image src="/logo.png" width={600} height={300} alt="Logo" />
+        </figure>
+        <div className="card-body">
+          <h2 className="card-title">{roomId}</h2>
+          <p>This is a .1ETH game. Best 2/3</p>
+          <div className="card-actions justify-end">
+            <button className="btn btn-primary">Join</button>
+          </div>
         </div>
-      )}
+      </div>
     </Link>
   );
 }
