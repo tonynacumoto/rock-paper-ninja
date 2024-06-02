@@ -3,6 +3,11 @@
 import React, { FormEvent, useState } from "react";
 import Image from "next/image";
 import lighthouse from "@lighthouse-web3/sdk";
+import { decodeEventLog } from "viem";
+import { useAccount, usePublicClient } from "wagmi";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+// import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const LillyPage: React.FC = () => {
   const [userInput, setUserInput] = useState<string>("");
@@ -10,12 +15,67 @@ const LillyPage: React.FC = () => {
   const [lightHouseURL, setLightHouseURL] = useState<string>("");
   const [output, setOutput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [ipfsCid, setIpfsCid] = useState<string>("");
+  const [tokenID, setTokenID] = useState<bigint>(0);
+  const [address, setAddress] = useState<string>("");
+  const publicClient = usePublicClient();
+  // Mint the NFT
+  const { NFT } = getAllContracts();
+  const { writeContractAsync: writeTokenURI } = useScaffoldWriteContract("NFT");
+  const { address: addressWagmi } = useAccount();
 
+  const handleMint = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    // Mint the NFT after the image is uploaded to IPFS
+    const txHash = await scMintNFT(ipfsCid);
+    const receipt = await publicClient?.waitForTransactionReceipt({ hash: txHash });
+    let topics;
+    try {
+      topics = decodeEventLog({
+        abi: NFT.abi,
+        data: receipt?.logs[1].data,
+        topics: receipt?.logs[1].topics,
+      });
+      setTokenID(topics?.args?._tokenId);
+      console.log("id", tokenID);
+    } catch (error) {
+      console.error("error in decode", error);
+    }
+  };
+
+  //Read the contract data.
+  // const { data: tokenURI } = useScaffoldReadContract({
+  //   contractName: "NFT",
+  //   functionName: "tokenURI",
+  //   args: [tokenID], // Replace 'bigIntId' with the ID of the minted NFT
+  // });
+  // console.log('tokenURI', tokenURI);
+
+  const scMintNFT = async (ipfsCid: string) => {
+    // Create the metadata for the NFT
+    const metadata = {
+      description: "Lilypad Image NFT",
+      image: "Visit at https://gateway.lighthouse.storage/ipfs/" + ipfsCid,
+      name: imageName,
+      attributes: [], // Add any attributes you want here
+    };
+    const addressToMint = address || addressWagmi;
+    const txHash = await writeTokenURI({
+      functionName: "mint",
+      args: [addressToMint, JSON.stringify(metadata)], // Replace 'address' with the address of the NFT recipient
+    });
+    // console.log('addressWagmi', addressWagmi);
+    // console.log('write res', txHash);
+    return txHash;
+  };
+
+  // Console.log loading percentage
   const progressCallback = progressData => {
     let percentageDone = 100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
     console.log(percentageDone);
   };
 
+  //IPFS hack for lillypad to get file from local url
   const getFileFromUrl = async url => {
     const response = await fetch(url);
     const data = await response.blob();
@@ -35,7 +95,8 @@ const LillyPage: React.FC = () => {
       const output = await lighthouse.upload(file, apiKey, false, null, progressCallback);
       console.log("File Status:", output);
       console.log("Visit at https://gateway.lighthouse.storage/ipfs/" + output.data.Hash);
-      return output.data.Hash;
+      const jsonIpfsCid = JSON.stringify(output.data.Hash);
+      setIpfsCid(jsonIpfsCid);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -61,10 +122,11 @@ const LillyPage: React.FC = () => {
 
       // Upload the image to IPFS
       const fileList = await getFileFromUrl(imageURL);
-      const ipfsCid = await uploadFile(fileList);
+      // const ipfsCid = await uploadFile(fileList);
+      uploadFile(fileList);
       console.log("IPFS CID", ipfsCid);
       //Some reason the setLighthouseURL not working and could be fixed but not important.
-      setLightHouseURL(`https://gateway.lighthouse.storage/ipfs/${ipfsCid}`);
+      setLightHouseURL("Visit at https://gateway.lighthouse.storage/ipfs/" + ipfsCid);
       console.log("LightHouse URL", lightHouseURL);
     } catch (error) {
       console.error("Error:", error);
@@ -74,7 +136,7 @@ const LillyPage: React.FC = () => {
 
   return (
     <main>
-      <div className="flex min-h-screen flex-col items-center p-24">
+      <div className="flex min-h-screen flex-col items-center p-12">
         <div className="z-10 max-w-full w-full flex flex-col items-center justify-center font-mono text-sm space-y-4">
           <h1 className="text-4xl mb-4">Lilypad Image Generator</h1>
           <div className="w-full flex flex-col items-center">
@@ -102,15 +164,31 @@ const LillyPage: React.FC = () => {
                 placeholder="Enter your prompt"
                 rows={4}
               />
-              <div className="w-full flex justify-end">
+              {/* Add a new input for the NFT recipient's address */}
+              <input
+                className="w-full p-2 mb-2"
+                value={address}
+                onChange={e => setAddress(e.target.value)}
+                placeholder="Enter recipient's address"
+              />
+              <div className="flex justify-between">
                 <button
                   type="submit"
-                  className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="mt-4 bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
-                  Submit
+                  Generate NFT
+                </button>
+                <button
+                  onClick={handleMint}
+                  className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  type="button"
+                >
+                  Mint NFT
                 </button>
               </div>
             </form>
+            {/* Display the token URI */}
+            {/* {tokenURI && <p>Token URI: {tokenURI}</p>} */}
           </div>
         </div>
       </div>
