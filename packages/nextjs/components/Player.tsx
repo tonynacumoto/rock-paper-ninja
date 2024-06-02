@@ -19,6 +19,10 @@ import { setStore } from "~~/utils/store";
 
 /* eslint-disable prettier/prettier */
 
+/* eslint-disable prettier/prettier */
+
+/* eslint-disable prettier/prettier */
+
 const determineWinner = (throw1: string, throw2: string) => {
   console.log(throw1, throw2);
   if (throw1 === throw2) {
@@ -147,9 +151,10 @@ const Player = ({
         </ul>
       </div>
       {match[player].throws.map((throwValue: any, i: number) => {
-        const moreThrowsThanCount = i > round;
+        const moreThrowsThanCount = i >= round;
         const moreThrowsThanOpponent = myThrows.length > otherPlayer.throws.length;
         const keepSecret = moreThrowsThanCount && moreThrowsThanOpponent;
+        console.log("moreThrowsThanCount", moreThrowsThanCount, "moreThrowsThanOpponent", moreThrowsThanOpponent);
         const backgroundColor =
           keepSecret || winLosses[i] === "draw"
             ? "bg-gray-200"
