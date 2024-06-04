@@ -78,7 +78,7 @@ function Game() {
       setGameId(gameId + 1);
       setMoves([]);
     }
-  }, [moves]);
+  }, [determineWinner, gameId, getMoves, moves]);
 
   const currentGameMoves = getMoves(gameId);
   const youMadeMove = currentGameMoves.find(move => move.sender === peerId);

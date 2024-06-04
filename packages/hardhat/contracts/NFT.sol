@@ -13,6 +13,9 @@ contract NFT is ERC721URIStorage {
 	// Counter for the next token ID to be minted
 	uint256 private _tokenIdCounter;
 
+	// Mapping from owner address to list of owned token IDs
+	mapping(address => uint256[]) private _ownedTokens;
+
 	/**
 	 * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
 	 * @param name The name of the NFT collection.
@@ -35,5 +38,19 @@ contract NFT is ERC721URIStorage {
 
 		_mint(to, tokenId);
 		_setTokenURI(tokenId, tokenURI);
+
+		// Add the token to the owner's list of owned tokens
+		_ownedTokens[to].push(tokenId);
+	}
+
+	/**
+	 * @notice Returns a list of token IDs owned by a given address.
+	 * @param owner The address to query.
+	 * @return A list of token IDs owned by `owner`.
+	 */
+	function tokensOfOwner(
+		address owner
+	) external view returns (uint256[] memory) {
+		return _ownedTokens[owner];
 	}
 }
