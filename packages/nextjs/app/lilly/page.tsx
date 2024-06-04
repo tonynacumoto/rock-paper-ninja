@@ -9,6 +9,8 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 // import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
+const apiKey = process.env.NEXT_PUBLIC_LIGHTHOUSE ?? ""; // Provide a default value for apiKey if it is undefined
+
 const LillyPage: React.FC = () => {
   const [userInput, setUserInput] = useState<string>("");
   const [imageName, setImageName] = useState<string>("");
@@ -28,15 +30,17 @@ const LillyPage: React.FC = () => {
     event.preventDefault();
     // Mint the NFT after the image is uploaded to IPFS
     const txHash = await scMintNFT(ipfsCid);
-    const receipt = await publicClient?.waitForTransactionReceipt({ hash: txHash });
-    let topics;
+    const receipt = await publicClient?.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
+    let topics: any; // Specify the type as 'any'
     try {
       topics = decodeEventLog({
         abi: NFT.abi,
         data: receipt?.logs[1].data,
-        topics: receipt?.logs[1].topics,
+        topics: receipt?.logs[1].topics ?? [], // Provide an empty array as the default value for topics
       });
-      setTokenID(topics?.args?._tokenId);
+      if (topics.args) {
+        setTokenID(topics?.args[0]?._tokenId);
+      }
       console.log("id", tokenID);
     } catch (error) {
       console.error("error in decode", error);
@@ -92,10 +96,9 @@ const LillyPage: React.FC = () => {
   };
 
   const uploadFile = async (file: FileList) => {
-    const apiKey = process.env.NEXT_PUBLIC_LIGHTHOUSE;
     console.log("Uploading file:", file);
     try {
-      const output = await lighthouse.upload(file, apiKey, false, null, progressCallback);
+      const output = await lighthouse.upload(file, apiKey, undefined, undefined, progressCallback);
       console.log("File Status:", output);
       console.log("Visit at https://gateway.lighthouse.storage/ipfs/" + output.data.Hash);
       const jsonIpfsCid = output.data.Hash;
