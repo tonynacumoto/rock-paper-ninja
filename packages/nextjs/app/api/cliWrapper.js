@@ -1,5 +1,5 @@
 // This will allow us to run code in our CLI.
-const { exec } = require("child_process");
+import { exec } from "child_process";
 
 // The function we will call on the front end, to run a lilypad job.
 function runCliCommand(userInput, callback) {
@@ -18,8 +18,6 @@ function runCliCommand(userInput, callback) {
   // const command = `export WEB3_PRIVATE_KEY=${web3PrivateKey} && lilypad run sdxl-pipeline:v1.0-base-lilypad3 -i Prompt="an astronaut floating against a white background"`;
   const command = `export WEB3_PRIVATE_KEY=${web3PrivateKey} && lilypad run sdxl-pipeline:v1.0-base-lilypad3 -i Prompt="${userInput}"`;
   console.log("UserInput: ", userInput);
-
-
 
   // This is a callback function to handle any errors when calling runCliCommand function.
   exec(command, async (error, stdout, stderr) => {

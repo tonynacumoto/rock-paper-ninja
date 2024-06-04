@@ -43,14 +43,6 @@ const LillyPage: React.FC = () => {
     }
   };
 
-  //Read the contract data.
-  // const { data: tokenURI } = useScaffoldReadContract({
-  //   contractName: "NFT",
-  //   functionName: "tokenURI",
-  //   args: [tokenID], // Replace 'bigIntId' with the ID of the minted NFT
-  // });
-  // console.log('tokenURI', tokenURI);
-
   const scMintNFT = async (ipfsCid: string) => {
     // Create the metadata for the NFT
     console.log("ipfsCid", ipfsCid);
@@ -72,12 +64,12 @@ const LillyPage: React.FC = () => {
 
   // Console.log loading percentage
   const progressCallback = progressData => {
-    let percentageDone = 100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
+    const percentageDone = 100 - Number((progressData?.total / progressData?.uploaded)?.toFixed(2));
     console.log(percentageDone);
   };
 
   //IPFS hack for lillypad to get file from local url
-  const getFileFromUrl = async url => {
+  const getFileFromUrl = async (url: RequestInfo | URL) => {
     const response = await fetch(url);
     const data = await response.blob();
     const file = new File([data], "filename", { type: data.type });
@@ -89,7 +81,7 @@ const LillyPage: React.FC = () => {
     return fileList;
   };
 
-  const uploadFile = async file => {
+  const uploadFile = async (file: FileList) => {
     const apiKey = process.env.NEXT_PUBLIC_LIGHTHOUSE;
     console.log("Uploading file:", file);
     try {
