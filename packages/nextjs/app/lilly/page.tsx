@@ -43,6 +43,16 @@ const LillyPage: React.FC = () => {
     }
   };
 
+  //Read the contract data.
+  // const { data: tokenURI } = useScaffoldReadContract({
+  //   contractName: "NFT",
+  //   functionName: "tokenURI",
+  //   args: [tokenID], // Replace 'bigIntId' with the ID of the minted NFT
+  // });
+  // console.log('tokenURI', tokenURI);
+
+  //Added test comment
+
   const scMintNFT = async (ipfsCid: string) => {
     // Create the metadata for the NFT
     console.log("ipfsCid", ipfsCid);
