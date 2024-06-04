@@ -16,7 +16,7 @@ const LillyPage: React.FC = () => {
   const [output, setOutput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [ipfsCid, setIpfsCid] = useState<string>("");
-  const [tokenID, setTokenID] = useState<bigint>(0);
+  const [tokenID, setTokenID] = useState<bigint>(BigInt(0));
   const [address, setAddress] = useState<string>("");
   const publicClient = usePublicClient();
   // Mint the NFT
@@ -73,7 +73,7 @@ const LillyPage: React.FC = () => {
   };
 
   // Console.log loading percentage
-  const progressCallback = progressData => {
+  const progressCallback = (progressData: any) => {
     const percentageDone = 100 - Number((progressData?.total / progressData?.uploaded)?.toFixed(2));
     console.log(percentageDone);
   };

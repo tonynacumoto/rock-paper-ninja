@@ -5,14 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { set } from "nprogress";
 
+// import { set } from "nprogress";
 
 export default function Profile() {
   const { isConnected } = useAccount();
   const { address: addressWagmi } = useAccount();
   const [lastNFT, setLastNFT] = useState(BigInt(0));
-  const [tokenURI, setTokenURI] = useState(null);
+  const [tokenURI, setTokenURI] = useState("");
   const [imageSrc, setImageSrc] = useState("");
 
   const tokenListResult = useScaffoldReadContract({
@@ -24,7 +24,7 @@ export default function Profile() {
   useEffect(() => {
     if (tokenListResult.data) {
       console.log("tokenList Size", tokenListResult.data?.length);
-      console.log('tokenList', tokenListResult.data);
+      console.log("tokenList", tokenListResult.data);
 
       if (tokenListResult.data.length > 0) {
         const lastNFT = tokenListResult.data[tokenListResult.data.length - 1];
@@ -42,13 +42,13 @@ export default function Profile() {
   useEffect(() => {
     if (tokenURIResult.data) {
       const tokenData = JSON.parse(tokenURIResult.data);
-      console.log('tokenURI', tokenURIResult.data);
+      console.log("tokenURI", tokenURIResult.data);
       setTokenURI(tokenURIResult.data);
       setImageSrc(tokenData.image);
     }
   }, [tokenURIResult]);
-  console.log('tokenURI', tokenURI);
-  console.log('imageSrc', imageSrc);
+  console.log("tokenURI", tokenURI);
+  console.log("imageSrc", imageSrc);
 
   if (!isConnected) {
     return <div>Connect wallet in the header</div>;

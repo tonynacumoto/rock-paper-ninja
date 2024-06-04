@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import lighthouse from "@lighthouse-web3/sdk";
 
-
 const IpfsPage: React.FC = () => {
   // const [fileInfo, setFileInfo] = useState(null);
   const [cid, setCid] = useState<string>("");
