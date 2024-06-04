@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDataMessage, useLocalPeer } from "@huddle01/react/hooks";
 
 const MOVE_OPTIONS = ["rock", "paper", "scissors"];
@@ -17,31 +17,37 @@ function Game() {
   const [moveMade, setMoveMade] = useState(false);
   const [gameResult, setGameResult] = useState("");
 
-  function getMoves(gameId: number) {
-    return moves.filter(move => move.gameId === gameId);
-  }
+  const getMoves = useCallback(
+    (gameId: number) => {
+      return moves.filter(move => move.gameId === gameId);
+    },
+    [moves],
+  );
 
-  function determineWinner() {
-    const moves = getMoves(gameId);
-    const yourMove = moves.find(move => move.sender === peerId);
-    const opponentMove = moves.find(move => move.sender !== peerId);
-    if (yourMove === undefined || opponentMove === undefined) {
+  const determineWinner = useCallback(
+    (gameId: number) => {
+      const moves = getMoves(gameId);
+      const yourMove = moves.find(move => move.sender === peerId);
+      const opponentMove = moves.find(move => move.sender !== peerId);
+      if (yourMove === undefined || opponentMove === undefined) {
+        return "tie";
+      }
+      if (yourMove.move === opponentMove.move) {
+        return "tie";
+      }
+      if (yourMove.move === "rock") {
+        return opponentMove.move === "paper" ? `You lost` : `You won`;
+      }
+      if (yourMove.move === "paper") {
+        return opponentMove.move === "scissors" ? `You lost` : `You won`;
+      }
+      if (yourMove.move === "scissors") {
+        return opponentMove.move === "rock" ? `You lost` : `You won`;
+      }
       return "tie";
-    }
-    if (yourMove.move === opponentMove.move) {
-      return "tie";
-    }
-    if (yourMove.move === "rock") {
-      return opponentMove.move === "paper" ? `You lost` : `You won`;
-    }
-    if (yourMove.move === "paper") {
-      return opponentMove.move === "scissors" ? `You lost` : `You won`;
-    }
-    if (yourMove.move === "scissors") {
-      return opponentMove.move === "rock" ? `You lost` : `You won`;
-    }
-    return "tie";
-  }
+    },
+    [getMoves, peerId],
+  );
 
   const { sendData } = useDataMessage({
     onMessage: (payload, from, label) => {
@@ -72,7 +78,7 @@ function Game() {
     const moves = getMoves(gameId);
 
     if (moves.length === 2) {
-      const result = determineWinner();
+      const result = determineWinner(gameId);
       setGameResult(result);
       setMoveMade(false);
       setGameId(gameId + 1);
