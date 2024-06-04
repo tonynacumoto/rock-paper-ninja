@@ -1,9 +1,10 @@
 // Express is a framework for APIs.
-const express = require("express");
-// Cors will allow our browser to interact with our command line.
-const cors = require("cors");
 // Here we are importing our cli wrapper we just created
-const { runCliCommand } = require("./api/cliWrapper");
+import { runCliCommand } from "./api/cliWrapper";
+// Cors will allow our browser to interact with our command line.
+import cors from "cors";
+import express from "express";
+
 // Create an instance of Express to set up the server
 const app = express();
 // Define the port number on which the server will listen

@@ -16,7 +16,7 @@ const LillyPage: React.FC = () => {
   const [output, setOutput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [ipfsCid, setIpfsCid] = useState<string>("");
-  const [tokenID, setTokenID] = useState<bigint>(0);
+  const [tokenID, setTokenID] = useState<bigint>(BigInt(0));
   const [address, setAddress] = useState<string>("");
   const publicClient = usePublicClient();
   // Mint the NFT
@@ -43,6 +43,16 @@ const LillyPage: React.FC = () => {
     }
   };
 
+  //Read the contract data.
+  // const { data: tokenURI } = useScaffoldReadContract({
+  //   contractName: "NFT",
+  //   functionName: "tokenURI",
+  //   args: [tokenID], // Replace 'bigIntId' with the ID of the minted NFT
+  // });
+  // console.log('tokenURI', tokenURI);
+
+  //Added test comment
+
   const scMintNFT = async (ipfsCid: string) => {
     // Create the metadata for the NFT
     console.log("ipfsCid", ipfsCid);
@@ -63,7 +73,7 @@ const LillyPage: React.FC = () => {
   };
 
   // Console.log loading percentage
-  const progressCallback = progressData => {
+  const progressCallback = (progressData: any) => {
     const percentageDone = 100 - Number((progressData?.total / progressData?.uploaded)?.toFixed(2));
     console.log(percentageDone);
   };
