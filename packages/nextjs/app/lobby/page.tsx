@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { getLiveMeetings } from "../actions";
 import CreateGame from "./components/CreateGame";
 import RoomCard from "./components/RoomCard";
@@ -9,9 +12,22 @@ type RoomInfo = {
   roomId: string;
 };
 
-const Lobby: NextPage = async () => {
-  const rooms = await getLiveMeetings();
-  console.log(rooms);
+const Lobby: NextPage = () => {
+  const [rooms, setRooms] = useState<any>();
+  const [loading, setLoading] = useState(false);
+  const fetchRooms = async () => {
+    setLoading(true);
+    const roomsData = await getLiveMeetings();
+    console.log("roomsData:", roomsData);
+    setRooms(roomsData);
+    setLoading(false);
+  };
+  useEffect(() => {
+    console.log("fetch test", rooms, loading);
+    if (!rooms && !loading) {
+      fetchRooms();
+    }
+  }, [loading, rooms]);
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">

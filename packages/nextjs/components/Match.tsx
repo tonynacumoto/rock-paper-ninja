@@ -46,13 +46,20 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
    *
    */
   useEffect(() => {
-    // console.log("match", match);
     async function fetchMatch() {
       setFetching(true);
       const _match = await getStore({ key: storeKey });
-      setMatch(_match as object);
-      setFetching(false);
-      setNeedsUpdate(false);
+      console.log("_match:", storeKey, _match);
+      if (_match) {
+        setMatch(_match as object);
+        // by only having this code run if match present
+        // prevents from being fetched again if non-existent
+        // todo: add in error message that store cannot be found
+        // happens when smart contract and KV fall out of sync
+        setFetching(false);
+        setNeedsUpdate(false);
+      }
+      debugger;
     }
     async function syncMatchDataWithContract() {
       setSyncing(true);
@@ -65,8 +72,10 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
         data: updatedMatchData,
       });
       setSyncing(false);
+      setFetching(false);
       setMatch(updatedMatchData as object);
       setNeedsUpdate(false);
+      debugger;
     }
     /*
      *
@@ -116,7 +125,10 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
 
             const sanitizedData = cleanBigIntData(smartContractData);
             sanitizedData[3] = address;
-            await setStore({
+
+            console.log("sanitizedData:", sanitizedData);
+            debugger;
+            const _store = await setStore({
               key: storeKey,
               data: {
                 id: `${chainId}-${escrowInt}`,
@@ -134,6 +146,8 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
                 date: new Date(),
               },
             });
+            setNeedsUpdate(true);
+            console.log("_store:", _store);
           } catch (e) {
             console.error("Error joining escrow:", e);
           }

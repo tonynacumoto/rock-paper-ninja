@@ -15,6 +15,7 @@ const Home: NextPage = () => {
     contractName: "Escrow",
     functionName: "getAllEscrows",
   });
+
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
