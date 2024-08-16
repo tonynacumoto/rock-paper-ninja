@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Player from "./Player";
 import { isEqual } from "lodash";
 import { parseEther } from "viem";
@@ -18,7 +19,17 @@ import { getStore, setStore } from "~~/utils/store";
  *
  *
  */
-const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?: boolean }) => {
+const Match = ({
+  id,
+  chainId,
+  cta = true,
+  allowSpectate,
+}: {
+  id: bigint;
+  chainId: number;
+  cta?: boolean;
+  allowSpectate?: boolean;
+}) => {
   const escrowInt = BigInt(id).toString();
   const [needsUpdate, setNeedsUpdate] = useState<boolean>();
   const [fetching, setFetching] = useState<boolean>();
@@ -30,14 +41,15 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
     functionName: "escrows",
     args: [id as bigint],
   });
-  const [, , , depositor2, amount, ,] = cleanBigIntData(smartContractData);
+  console.log("smartContractData:", smartContractData);
+  const [, , , depositor2, amount, isFinished] = cleanBigIntData(smartContractData);
   const isReady = depositor2 && depositor2 !== ZERO_ADDRESS;
   const [match, setMatch] = useState<{ closingHash?: string; smartContractData?: any }>(); // Define the type of 'match' as an object with a 'smartContractData' property
   const storeKey = `${chainId}-${escrowInt}`;
+  const router = useRouter();
 
   const cleanSmartContractData = cleanBigIntData(smartContractData);
   const dataMatches = isEqual(cleanSmartContractData, match?.smartContractData);
-
   /*
    *
    *
@@ -49,7 +61,6 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
     async function fetchMatch() {
       setFetching(true);
       const _match = await getStore({ key: storeKey });
-      console.log("_match:", storeKey, _match);
       if (_match) {
         setMatch(_match as object);
         // by only having this code run if match present
@@ -59,7 +70,6 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
         setFetching(false);
         setNeedsUpdate(false);
       }
-      debugger;
     }
     async function syncMatchDataWithContract() {
       setSyncing(true);
@@ -75,7 +85,6 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
       setFetching(false);
       setMatch(updatedMatchData as object);
       setNeedsUpdate(false);
-      debugger;
     }
     /*
      *
@@ -110,7 +119,7 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
    *
    */
   return (
-    <div className="flex flex-col mb-2 mr-2">
+    <div className="flex flex-col">
       {cta ? (
         <button
           className="btn btn-success mb-2"
@@ -127,8 +136,6 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
               const sanitizedData = cleanBigIntData(smartContractData);
               sanitizedData[3] = address;
 
-              console.log("sanitizedData:", sanitizedData);
-              debugger;
               const _store = await setStore({
                 key: storeKey,
                 data: {
@@ -155,15 +162,15 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
           }}
         >
           {isReady
-            ? `Match ${escrowInt} ${match?.closingHash ? "Closed" : "Underway"}`
+            ? `Match ${escrowInt} ${isFinished ? "Closed" : "Underway"}`
             : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
         </button>
       ) : (
         <>Click your address to throw an attack</>
       )}
 
-      <div className="flex flex-col items-center">
-        {match && !match?.closingHash ? (
+      <div className="flex flex-col items-center justify-center">
+        {match && !match?.closingHash && (
           <>
             <Player
               storeKey={storeKey}
@@ -186,9 +193,15 @@ const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?:
                 setNeedsUpdate(true);
               }}
             />
+            {allowSpectate && (
+              <div
+                className="underline text-gray-300 cursor-pointer mt-4"
+                onClick={() => router.push(`match/${escrowInt}`)}
+              >
+                spectate match
+              </div>
+            )}
           </>
-        ) : (
-          <>winner data here</>
         )}
       </div>
       {match?.closingHash && (

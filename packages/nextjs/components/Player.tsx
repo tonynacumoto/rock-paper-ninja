@@ -34,7 +34,6 @@ const Player = ({
   match: any;
   refreshMatch: () => void;
 }) => {
-  console.log("match", match);
   const round = match.round || 0;
   const isPlayer = match[player]?.address === addressOfUser;
   const otherPlayer = player === "player1" ? match.player2 : match.player1;

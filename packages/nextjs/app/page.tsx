@@ -3,12 +3,9 @@
 import Match from "../components/Match";
 import type { NextPage } from "next";
 import { parseEther } from "viem";
-import { useAccount } from "wagmi";
-import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract, useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
   const { targetNetwork } = useTargetNetwork();
   const { writeContractAsync: writeEscrowAsync } = useScaffoldWriteContract("Escrow");
   const { data: allEscrowIds } = useScaffoldReadContract({
@@ -24,13 +21,8 @@ const Home: NextPage = () => {
             <span className="block text-2xl mb-2">Welcome to</span>
             <span className="block text-4xl font-bold">🪨 Rock 📜 Paper 🥷 Ninja</span>
           </h1>
-          <div className="flex justify-center items-center space-x-2">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} />
-          </div>
-
           {process.env.NODE_ENV === "development" && (
-            <div className="justify-center flex flex-col mt-8 items-center">
+            <div className="justify-center flex flex-col mt-8 ">
               <button
                 className="btn btn-primary"
                 onClick={async () => {
@@ -49,13 +41,13 @@ const Home: NextPage = () => {
               <div className="flex flex-col w-full border-opacity-50">
                 <div className="divider">MATCHES</div>
               </div>
-              <div className="flex justify-center max-w-lg flex-wrap flex-col-reverse">
+              <div className="flex justify-center max-w-lg flex-wrap flex-col-reverse items-center">
                 {allEscrowIds &&
                   allEscrowIds?.map(escrowId => {
                     return (
                       <div key={escrowId} className="card card-compact w-96 bg-base-100 shadow-xl mb-4">
                         <div className="card-body">
-                          <Match key={escrowId} id={escrowId} chainId={targetNetwork.id} />
+                          <Match key={escrowId} id={escrowId} chainId={targetNetwork.id} allowSpectate={true} />
                         </div>
                       </div>
                     );
