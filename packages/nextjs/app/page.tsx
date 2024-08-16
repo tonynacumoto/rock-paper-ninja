@@ -30,7 +30,7 @@ const Home: NextPage = () => {
           </div>
 
           {process.env.NODE_ENV === "development" && (
-            <div className="justify-center flex flex-col mt-8">
+            <div className="justify-center flex flex-col mt-8 items-center">
               <button
                 className="btn btn-primary"
                 onClick={async () => {

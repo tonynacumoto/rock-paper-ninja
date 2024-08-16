@@ -24,7 +24,7 @@ const Player = ({
   addressOfUser,
   storeKey,
   player,
-  match,
+  match = {},
   refreshMatch,
 }: {
   text: string | undefined;
@@ -34,10 +34,11 @@ const Player = ({
   match: any;
   refreshMatch: () => void;
 }) => {
+  console.log("match", match);
   const round = match.round || 0;
-  const isPlayer = match[player].address === addressOfUser;
+  const isPlayer = match[player]?.address === addressOfUser;
   const otherPlayer = player === "player1" ? match.player2 : match.player1;
-  const myThrows = match[player].throws;
+  const myThrows = match[player]?.throws;
   const [, , , , , isEnded] = cleanBigIntData(match.smartContractData);
 
   const winLosses = winLossRecord({ throws1: match.player1.throws, throws2: match.player2.throws });
@@ -101,7 +102,7 @@ const Player = ({
   };
   const buttonDisabled = !isPlayer;
   return (
-    <div className={`flex items-center w-full space-y-1`}>
+    <div className={`flex items-center space-y-1`}>
       <div className="w-40">
         {isEnded ? (
           <div>

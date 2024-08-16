@@ -18,7 +18,7 @@ import { getStore, setStore } from "~~/utils/store";
  *
  *
  */
-const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
+const Match = ({ id, chainId, cta = true }: { id: bigint; chainId: number; cta?: boolean }) => {
   const escrowInt = BigInt(id).toString();
   const [needsUpdate, setNeedsUpdate] = useState<boolean>();
   const [fetching, setFetching] = useState<boolean>();
@@ -111,79 +111,84 @@ const Match = ({ id, chainId }: { id: bigint; chainId: number }) => {
    */
   return (
     <div className="flex flex-col mb-2 mr-2">
-      <button
-        className="btn btn-success mb-2"
-        disabled={isReady}
-        onClick={async () => {
-          console.log("writing to blockchain");
-          try {
-            await writeEscrowAsync({
-              functionName: "joinEscrow",
-              args: [id as bigint],
-              value: parseEther("0.1"),
-            });
+      {cta ? (
+        <button
+          className="btn btn-success mb-2"
+          disabled={isReady}
+          onClick={async () => {
+            console.log("writing to blockchain");
+            try {
+              await writeEscrowAsync({
+                functionName: "joinEscrow",
+                args: [id as bigint],
+                value: parseEther("0.1"),
+              });
 
-            const sanitizedData = cleanBigIntData(smartContractData);
-            sanitizedData[3] = address;
+              const sanitizedData = cleanBigIntData(smartContractData);
+              sanitizedData[3] = address;
 
-            console.log("sanitizedData:", sanitizedData);
-            debugger;
-            const _store = await setStore({
-              key: storeKey,
-              data: {
-                id: `${chainId}-${escrowInt}`,
-                smartContractData: sanitizedData,
-                round: 0,
-                firstTo: 2,
-                player1: {
-                  address: sanitizedData[2],
-                  throws: [],
+              console.log("sanitizedData:", sanitizedData);
+              debugger;
+              const _store = await setStore({
+                key: storeKey,
+                data: {
+                  id: `${chainId}-${escrowInt}`,
+                  smartContractData: sanitizedData,
+                  round: 0,
+                  firstTo: 2,
+                  player1: {
+                    address: sanitizedData[2],
+                    throws: [],
+                  },
+                  player2: {
+                    address: sanitizedData[3],
+                    throws: [],
+                  },
+                  date: new Date(),
                 },
-                player2: {
-                  address: sanitizedData[3],
-                  throws: [],
-                },
-                date: new Date(),
-              },
-            });
-            setNeedsUpdate(true);
-            console.log("_store:", _store);
-          } catch (e) {
-            console.error("Error joining escrow:", e);
-          }
-        }}
-      >
-        {isReady
-          ? `Match ${escrowInt} ${match?.closingHash ? "Closed" : "Underway"}`
-          : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
-      </button>
-
-      <div className="flex flex-col items-baseline">
-        {match && (
-          <Player
-            storeKey={storeKey}
-            player="player1"
-            text={shortenHash(smartContractData[2]) ?? ""}
-            addressOfUser={address || ""}
-            match={match}
-            refreshMatch={() => {
+              });
               setNeedsUpdate(true);
-            }}
-          />
-        )}
+              console.log("_store:", _store);
+            } catch (e) {
+              console.error("Error joining escrow:", e);
+            }
+          }}
+        >
+          {isReady
+            ? `Match ${escrowInt} ${match?.closingHash ? "Closed" : "Underway"}`
+            : `Join Match #${escrowInt} for ${amount && formatEther(amount)} ETH`}
+        </button>
+      ) : (
+        <>Click your address to throw an attack</>
+      )}
 
-        {match && (
-          <Player
-            storeKey={storeKey}
-            player="player2"
-            text={shortenHash(smartContractData[3]) || ""}
-            addressOfUser={address || ""}
-            match={match}
-            refreshMatch={() => {
-              console.log("refreshing from player");
-              setNeedsUpdate(true);
-            }}
-          />
+      <div className="flex flex-col items-center">
+        {match && !match?.closingHash ? (
+          <>
+            <Player
+              storeKey={storeKey}
+              player="player1"
+              text={shortenHash(smartContractData[2]) ?? ""}
+              addressOfUser={address || ""}
+              match={match}
+              refreshMatch={() => {
+                setNeedsUpdate(true);
+              }}
+            />
+            <Player
+              storeKey={storeKey}
+              player="player2"
+              text={shortenHash(smartContractData[3]) || ""}
+              addressOfUser={address || ""}
+              match={match}
+              refreshMatch={() => {
+                console.log("refreshing from player");
+                setNeedsUpdate(true);
+              }}
+            />
+          </>
+        ) : (
+          <>winner data here</>
         )}
       </div>
       {match?.closingHash && (
