@@ -9,7 +9,7 @@ export default function Page({ params }: { params: { id: string; escrowId: numbe
   return (
     <main className="flex p-12 justify-center">
       {hasId ? (
-        <Match id={BigInt(params.id || 0)} chainId={targetNetwork.id} cta={false} />
+        <Match loopFetchGameData={true} id={BigInt(params.id || 0)} chainId={targetNetwork.id} cta={false} />
       ) : (
         <div> no match with that id</div>
       )}

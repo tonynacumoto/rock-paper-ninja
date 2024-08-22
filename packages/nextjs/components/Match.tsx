@@ -20,11 +20,13 @@ import { getStore, setStore } from "~~/utils/store";
  *
  */
 const Match = ({
+  loopFetchGameData = false,
   id,
   chainId,
   cta = true,
   allowSpectate,
 }: {
+  loopFetchGameData?: boolean;
   id: bigint;
   chainId: number;
   cta?: boolean;
@@ -41,7 +43,7 @@ const Match = ({
     functionName: "escrows",
     args: [id as bigint],
   });
-  console.log("smartContractData:", smartContractData);
+  // console.log("smartContractData:", smartContractData);
   const [, , , depositor2, amount, isFinished] = cleanBigIntData(smartContractData);
   const isReady = depositor2 && depositor2 !== ZERO_ADDRESS;
   const [match, setMatch] = useState<{ closingHash?: string; smartContractData?: any }>(); // Define the type of 'match' as an object with a 'smartContractData' property
@@ -59,6 +61,7 @@ const Match = ({
    */
   useEffect(() => {
     async function fetchMatch() {
+      console.log("fetching.....1");
       setFetching(true);
       const _match = await getStore({ key: storeKey });
       if (_match) {
@@ -97,6 +100,20 @@ const Match = ({
     if (match && !dataMatches && !syncing) {
       syncMatchDataWithContract();
     }
+
+    if (
+      smartContractData[3] !== "0x0000000000000000000000000000000000000000" && // 2 players
+      smartContractData[5] === false && // the game is NOT over
+      loopFetchGameData && // if looping enabled
+      (!match || needsUpdate) &&
+      !fetching &&
+      isReady
+    ) {
+      const myInterval = window.setInterval(() => {
+        fetchMatch();
+        if (window.location.href.split("/")[3] !== "match") window.clearInterval(myInterval);
+      }, 5000);
+    }
   }, [
     match,
     setMatch,
@@ -111,6 +128,7 @@ const Match = ({
     dataMatches,
     cleanSmartContractData,
   ]);
+
   /*
    *
    *
