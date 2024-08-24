@@ -7,4 +7,7 @@ contract Token is ERC20 {
 	constructor() ERC20("Ninja Token", "NINJA") {
 		_mint(msg.sender, 100_000 ether);
 	}
+	function mint(uint _amount) external{
+		_mint(msg.sender, _amount);
+	}
 }

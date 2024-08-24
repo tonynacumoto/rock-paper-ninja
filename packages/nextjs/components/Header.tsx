@@ -33,6 +33,10 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/profile",
   },
   {
+    label: "Staking",
+    href: "/staking",
+  },
+  {
     label: "Debug Contracts",
     href: "/debug",
   },
